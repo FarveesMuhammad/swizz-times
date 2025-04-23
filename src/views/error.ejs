@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - YourStore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .error-container {
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        .error-header {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1.5rem 2rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .error-header.warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .error-header.server {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .error-code {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .error-body {
+            padding: 2rem;
+        }
+        
+        .error-message {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .error-details {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+        
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: #2c3e50;
+            border: 1px solid #2c3e50;
+        }
+        
+        .btn-outline:hover {
+            background-color: #f1f2f3;
+        }
+        
+        footer {
+            background-color: #fff;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .error-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">SWIZZ-TIMES</div>
+    </header>
+    
+    <main>
+        <div class="error-container">
+            <div id="error-header" class="error-header">
+                <span id="error-title">Error Occurred</span>
+                <span id="error-code" class="error-code">404</span>
+            </div>
+            <div class="error-body">
+                <p id="error-message" class="error-message">
+                    We couldn't find the page you were looking for.
+                </p>
+                
+                <div id="error-details" class="error-details">
+                    Status: 404 Not Found
+                    Path: /unknown-page
+                    Time: 2025-04-14 14:32:25
+                </div>
+                
+                <div class="actions">
+                    <a href="/swizz-times" class="btn btn-primary">Return to Homepage</a>
+                    <button onclick="window.history.back()" class="btn btn-outline">Go Back</button>
+                    <button onclick="window.location.reload()" class="btn btn-outline">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 YourStore. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Get the error details from URL parameters
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status') || '404';
+            const message = urlParams.get('message') || 'We couldn\'t find the page you were looking for.';
+            const path = urlParams.get('path') || window.location.pathname;
+            
+            // Display the error information
+            document.getElementById('error-code').textContent = status;
+            document.getElementById('error-message').textContent = message;
+            
+            // Format current time for display
+            const now = new Date();
+            const timeString = now.toISOString().replace('T', ' ').substring(0, 19);
+            
+            // Update error details
+            document.getElementById('error-details').textContent = 
+                `Status: ${status}\nPath: ${path}\nTime: ${timeString}`;
+            
+            // Set appropriate header based on status code
+            const errorHeader = document.getElementById('error-header');
+            const errorTitle = document.getElementById('error-title');
+            
+            if (status.startsWith('4')) {
+                errorHeader.className = 'error-header'; // Default red for client errors
+                if (status === '404') {
+                    errorTitle.textContent = 'Page Not Found';
+                } else if (status === '403') {
+                    errorTitle.textContent = 'Access Forbidden';
+                } else if (status === '401') {
+                    errorTitle.textContent = 'Unauthorized Access';
+                } else {
+                    errorTitle.textContent = 'Client Error';
+                }
+            } else if (status.startsWith('5')) {
+                errorHeader.className = 'error-header server';
+                errorTitle.textContent = 'Server Error';
+            } else {
+                errorHeader.className = 'error-header warning';
+                errorTitle.textContent = 'Warning';
+            }
+        });
+    </script>
+</body>
+</html>

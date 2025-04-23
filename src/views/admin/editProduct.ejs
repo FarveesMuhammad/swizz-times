@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swizz Times - Edit Product</title>
+    <link rel="stylesheet" href="/css/admin/adminCategory.css">
+    <link rel="stylesheet" href="/css/admin/adminAddCategory.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container-fluid">`
+        <%- include('../partials/admin/admin_sidebar') %>
+        <div class="main-content">
+            <div class="header">
+                <button class="btn btn-outline-secondary mb-3" onclick="window.history.back()">
+                    <i class="fa fa-arrow-left"></i> Go Back
+                </button>
+                <h1>Edit Product</h1>
+                <button class="logout-button" onclick="window.location.href='/admin/logout'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+            
+            <div class="form-container">
+                <form  id="addProductForm" >
+                    <div class="form-group">
+                        <label for="productName">Product Name*</label>
+                        <input value="<%= currentProduct.productName %>" type="text" id="productName" name="productName" placeholder="Enter product name" required>
+                        <div id="productNameError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productDescription">Description*</label>
+                        <textarea id="productDescription" name="description" placeholder="Enter product description" required><%= currentProduct.description %></textarea>
+                        <div id="productDescriptionError" class="error-message"></div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="category">Category*</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select a category</option>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat._id %>" <%= currentProduct.category.toString() === cat._id.toString() ? 'selected' : '' %>><%= cat.name %></option>
+                            <% }) %>
+                        </select>
+                        <div id="categoryError" class="error-message"></div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="brand">Brand*</label>
+                        <select id="brand" name="brand" required>
+                            <option value="">Select a brand</option>
+                            <% brands.forEach(brand => { %>
+                                <option value="<%= brand._id %>" <%= currentProduct.brand.toString() === brand._id.toString() ? 'selected' : '' %>><%= brand.brandName %></option>
+                            <% }) %>
+                        </select>
+                        <div id="brandError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regularPrice">Regular Price*</label>
+                        <input value="<%= currentProduct.regularPrice %>" type="number" id="regularPrice" name="regularPrice" placeholder="Enter regular price" min="0" step="0.01" required>
+                        <div id="regularPriceError" class="error-message"></div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="salePrice">Sale Price*</label>
+                        <input value="<%= currentProduct.salePrice %>" type="number" id="salePrice" name="salePrice" placeholder="Enter sale price" min="0" step="0.01" required>
+                        <div id="salePriceError" class="error-message"></div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="quantity">Quantity*</label>
+                        <input value="<%= currentProduct.quantity %>" type="number" id="quantity" name="quantity" placeholder="Enter product quantity" min="0" required>
+                        <div id="quantityError" class="error-message"></div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="productOffer">Product Offer (%)</label>
+                        <input type="number" id="offer" name="productOffer" placeholder="Enter product offer" min="0" max="100" value="<%= currentProduct.productOffer %>">
+                        <div id="offerError" class="error-message"></div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="status">Status*</label>
+                        <select id="status" name="status" required>
+                            <option value="Available" <%= currentProduct.status === 'Available' ? 'selected' : '' %>>Available</option>
+                            <option value="out of stock" <%= currentProduct.status === 'out of stock' ? 'selected' : '' %>>Out of Stock</option>
+                        </select>
+                        <div id="statusError" class="error-message"></div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="case_material">Case Material*</label>
+                        <select id="case_material" name="case_material" required>
+                            <% ['Stainless Steel', 'Titanium', 'Ceramic', 'Gold', 'Carbon Fiber', 'Bronze'].forEach(material => { %>
+                                <option value="<%= material %>" <%= currentProduct.case_material === material ? 'selected' : '' %>><%= material %></option>
+                            <% }) %>
+                        </select>
+                        <div id="caseMaterialError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="band_material">Band Material*</label>
+                        <select id="band_material" name="band_material" required>
+                            <% ['Leather', 'Stainless Steel', 'Rubber', 'Nylon', 'Silicone', 'Titanium'].forEach(material => { %>
+                                <option value="<%= material %>" <%= currentProduct.band_material === material ? 'selected' : '' %>><%= material %></option>
+                            <% }) %>
+                        </select>
+                        <div id="bandMaterialError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="clasp_type">Clasp Type*</label>
+                        <select id="clasp_type" name="clasp_type" required>
+                            <% ['Buckle', 'Fold-Over Clasp', 'Push-Button Clasp', 'Deployment Clasp', 'Velcro'].forEach(clasp => { %>
+                                <option value="<%= clasp %>" <%= currentProduct.clasp_type === clasp ? 'selected' : '' %>><%= clasp %></option>
+                            <% }) %>
+                        </select>
+                        <div id="claspTypeError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="country">Country of Origin*</label>
+                        <input type="text" id="country" name="country" value="<%= currentProduct.country %>" required>
+                        <div id="countryError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="water_resistance">Water Resistance*</label>
+                        <select id="water_resistance" name="water_resistance" required>
+                            <option value="true" <%= currentProduct.water_resistance ? 'selected' : '' %>>Yes</option>
+                            <option value="false" <%= !currentProduct.water_resistance ? 'selected' : '' %>>No</option>
+                        </select>
+                        <div id="waterResistanceError" class="error-message"></div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label>Product Images* (4 images required)</label>
+                        <% for (let i = 1; i <= 4; i++) { %>
+                            <div class="image-field-container">
+                                <h4>Image <%= i %> <%= i === 1 ? '(Main Product Image)' : '' %></h4>
+                                <div class="image-upload-area">
+                                    <input type="file" id="productImage<%= i %>" name="productImage<%= i %>" accept="image/*" class="product-image-input">
+                                    <label for="productImage<%= i %>" class="upload-label">Select Image</label>
+                                    <div class="image-preview-area" id="previewArea<%= i %>">
+                                        <% if (currentProduct.productImage[i-1]) { %>
+                                            <img src="<%= currentProduct.productImage[i-1] %>" alt="Product Image <%= i %>" style="max-width: 100%; max-height: 200px;">
+                                        <% } else { %>
+                                            <p class="no-image-text">No image selected</p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="image-controls">
+                                    <button type="button" class="crop-button" id="cropButton<%= i %>" <%= currentProduct.productImage[i-1] ? '' : 'disabled' %>>Crop Image</button>
+                                    <button type="button" class="remove-button" id="removeButton<%= i %>" <%= currentProduct.productImage[i-1] ? '' : 'disabled' %>>Remove</button>
+                                </div>
+                            </div>
+                        <% } %>
+                        <div class="image-validation-message" id="imageValidationMessage">
+                            All 4 product images are required
+                        </div>
+                    </div>
+                    
+                    <!-- Crop Modal -->
+                    <div id="cropModal" class="crop-modal">
+                        <div class="crop-modal-content">
+                            <div class="crop-modal-header">
+                                <h3>Crop Image</h3>
+                                <span class="crop-modal-close">×</span>
+                            </div>
+                            <div class="crop-modal-body">
+                                <div class="crop-container">
+                                    <img id="cropImage" src="" alt="Image to crop">
+                                </div>
+                            </div>
+                            <div class="crop-modal-footer">
+                                <button type="button" id="applyCrop" class="crop-apply-button">Apply Crop</button>
+                                <button id="cancelCrop" class="crop-cancel-button">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="back-button" onclick="window.location.href='/admin/products'">
+                            Cancel
+                        </button>
+                        <button type="submit" class="submit-button" id="saveButton">
+                            Save Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+   
+    const existingImages = <%- JSON.stringify(currentProduct.productImage || ['', '', '', '']) %>;
+    console.log('existingImages:', existingImages);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setActiveMenuItem();
+        initImageHandling();
+        initFormSubmission();
+    });
+
+
+    let cropper = null;
+    let currentImageInput = null;
+    let croppedImages = {
+        productImage1: null,
+        productImage2: null,
+        productImage3: null,
+        productImage4: null
+    };
+
+    function initImageHandling() {
+        for (let i = 1; i <= 4; i++) {
+            const imageInput = document.getElementById(`productImage${i}`);
+            const previewArea = document.getElementById(`previewArea${i}`);
+            const cropButton = document.getElementById(`cropButton${i}`);
+            const removeButton = document.getElementById(`removeButton${i}`);
+
+            imageInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!validImageTypes.includes(file.type)) {
+                        Swal.fire({
+                            title: 'Invalid image type',
+                            text: 'Please select a valid image file (JPEG, PNG, GIF, WEBP)',
+                            icon: 'error',
+                            confirmButtonColor: '#d33'
+                        });
+                        this.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        previewArea.innerHTML = `<img src="${event.target.result}" class="preview-image" alt="Preview">`;
+                        cropButton.disabled = false;
+                        removeButton.disabled = false;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            cropButton.addEventListener('click', function() {
+                const previewImage = previewArea.querySelector('img');
+                if (previewImage) {
+                    openCropModal(previewImage.src, `productImage${i}`);
+                }
+            });
+
+            removeButton.addEventListener('click', function() {
+                previewArea.innerHTML = '<p class="no-image-text">No image selected</p>';
+                imageInput.value = '';
+                cropButton.disabled = true;
+                removeButton.disabled = true;
+                croppedImages[`productImage${i}`] = null;
+                existingImages[i-1] = ''; // Use empty string instead of null
+            });
+        }
+
+        document.querySelector('.crop-modal-close').addEventListener('click', closeCropModal);
+        document.getElementById('cancelCrop').addEventListener('click', closeCropModal);
+        document.getElementById('applyCrop').addEventListener('click', applyCrop);
+    }
+
+    function openCropModal(imageSrc, inputId) {
+        const cropModal = document.getElementById('cropModal');
+        const cropImage = document.getElementById('cropImage');
+        currentImageInput = inputId;
+        cropImage.src = imageSrc;
+        cropModal.style.display = 'flex';
+
+        setTimeout(() => {
+            if (cropper) {
+                cropper.destroy();
+            }
+            cropper = new Cropper(cropImage, {
+                aspectRatio: 1,
+                viewMode: 1,
+                responsive: true,
+                restore: false,
+                autoCropArea: 0.8,
+                movable: false,
+                zoomable: true,
+                rotatable: true,
+                scalable: false
+            });
+        }, 100);
+    }
+
+    function closeCropModal() {
+        const cropModal = document.getElementById('cropModal');
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        cropModal.style.display = 'none';
+    }
+
+    function applyCrop() {
+        if (!cropper || !currentImageInput) return;
+        const index = currentImageInput.slice(-1);
+        const canvas = cropper.getCroppedCanvas({
+            width: 500,
+            height: 500,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high'
+        });
+
+        if (!canvas) {
+            closeCropModal();
+            return;
+        }
+
+        const croppedImageUrl = canvas.toDataURL('image/jpeg', 0.9);
+        const previewArea = document.getElementById(`previewArea${index}`);
+        previewArea.innerHTML = `<img src="${croppedImageUrl}" class="preview-image" alt="Preview">`;
+
+        canvas.toBlob(function(blob) {
+            croppedImages[currentImageInput] = blob;
+        }, 'image/jpeg', 0.9);
+
+        closeCropModal();
+    }
+
+    function validateForm() {
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+
+        const fields = [
+            { id: 'productName', errorId: 'productNameError', message: 'Product name is required' },
+            { id: 'productDescription', errorId: 'productDescriptionError', message: 'Product description is required' },
+            { id: 'category', errorId: 'categoryError', message: 'Please select a category' },
+            { id: 'brand', errorId: 'brandError', message: 'Brand name is required' },
+            { id: 'regularPrice', errorId: 'regularPriceError', message: 'Regular price is required' },
+            { id: 'salePrice', errorId: 'salePriceError', message: 'Sale price is required' },
+            { id: 'quantity', errorId: 'quantityError', message: 'Quantity is required' },
+            { id: 'status', errorId: 'statusError', message: 'Please select a status' },
+            { id: 'case_material', errorId: 'caseMaterialError', message: 'Please select a case material' },
+            { id: 'band_material', errorId: 'bandMaterialError', message: 'Please select a band material' },
+            { id: 'clasp_type', errorId: 'claspTypeError', message: 'Please select a clasp type' },
+            { id: 'country', errorId: 'countryError', message: 'Country of origin is required' },
+            { id: 'water_resistance', errorId: 'waterResistanceError', message: 'Please select water resistance' }
+        ];
+
+        let isValid = true;
+
+        fields.forEach(field => {
+            const input = document.getElementById(field.id);
+            const errorElement = document.getElementById(field.errorId);
+            if (!input.value.trim()) {
+                errorElement.textContent = field.message;
+                input.classList.add('input-error');
+                isValid = false;
+            }
+        });
+
+        const salePrice = parseFloat(document.getElementById('salePrice').value);
+        const regularPrice = parseFloat(document.getElementById('regularPrice').value);
+        if (salePrice > regularPrice) {
+            Swal.fire({
+                title: 'Sale price cannot be greater than the regular price!',
+                icon: 'error',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Ok'
+            });
+            isValid = false;
+        }
+
+        let imagesValid = true;
+        for (let i = 1; i <= 4; i++) {
+            const imageInput = document.getElementById(`productImage${i}`);
+            const hasNewImage = imageInput.files.length > 0 || croppedImages[`productImage${i}`];
+            const hasExistingImage = existingImages[i-1] && existingImages[i-1].trim() !== '';
+            if (!hasNewImage && !hasExistingImage) {
+                imagesValid = false;
+                break;
+            }
+        }
+
+        if (!imagesValid) {
+            document.getElementById('imageValidationMessage').textContent = 'All 4 product images are required';
+            isValid = false;
+        } else {
+            document.getElementById('imageValidationMessage').textContent = '';
+        }
+
+        return isValid;
+    }
+
+    const cloudinaryUploadUrl = 'https://api.cloudinary.com/v1_1/dq1tnbaxt/image/upload';
+
+    async function uploadImageToCloudinary(file, index) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'ecommerce-Uploads');
+        formData.append('public_id', `product_image_${Date.now()}_${index}`);
+        formData.append('folder', 'products');
+
+        try {
+            const response = await fetch(cloudinaryUploadUrl, {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+            if (result.secure_url) {
+                return result.secure_url;
+            } else {
+                throw new Error('Image upload failed');
+            }
+        } catch (error) {
+            console.error(`Image Upload Error (Image ${index}):`, error);
+            return null;
+        }
+    }
+
+    async function handleImageUploads() {
+        Swal.fire({
+            title: 'Uploading...',
+            text: 'Please wait',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        const imageUrls = [];
+
+        for (let i = 1; i <= 4; i++) {
+            const inputName = `productImage${i}`;
+            let imageUrl = null;
+
+            if (croppedImages[inputName]) {
+                imageUrl = await uploadImageToCloudinary(croppedImages[inputName], i);
+            } else {
+                const fileInput = document.getElementById(inputName);
+                if (fileInput.files.length > 0) {
+                    imageUrl = await uploadImageToCloudinary(fileInput.files[0], i);
+                } else if (existingImages[i-1] && existingImages[i-1].trim() !== '') {
+                    imageUrl = existingImages[i-1];
+                }
+            }
+
+            if (imageUrl) {
+                imageUrls.push(imageUrl);
+            } else {
+                console.warn(`No valid image for slot ${i}`);
+            }
+        }
+
+        console.log('imageUrls:', imageUrls);
+        Swal.close();
+        return imageUrls;
+    }
+
+    async function submitForm() {
+        try {
+            const imageUrls = await handleImageUploads();
+
+            if (imageUrls.length < 4) {
+                throw new Error('All 4 product images are required.');
+            }
+
+            const productData = {
+                productName: document.getElementById('productName').value.trim(),
+                description: document.getElementById('productDescription').value.trim(),
+                category: document.getElementById('category').value,
+                brand: document.getElementById('brand').value,
+                regularPrice: parseFloat(document.getElementById('regularPrice').value),
+                salePrice: parseFloat(document.getElementById('salePrice').value),
+                quantity: parseInt(document.getElementById('quantity').value),
+                productOffer: parseInt(document.getElementById('offer').value) || 0,
+                status: document.getElementById('status').value,
+                productImage: imageUrls, // Match schema field name
+                case_material: document.getElementById('case_material').value,
+                band_material: document.getElementById('band_material').value,
+                clasp_type: document.getElementById('clasp_type').value,
+                country: document.getElementById('country').value.trim(),
+                water_resistance: document.getElementById('water_resistance').value === 'true'
+            };
+
+            const response = await fetch(`/admin/products/edit/<%= currentProduct._id %>`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(productData),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Product updated successfully',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6'
+                }).then(() => {
+                    window.location.href = '/admin/products';
+                });
+            } else {
+                throw new Error(result.message || 'Unknown error occurred');
+            }
+        } catch (error) {
+            console.error('Error updating product:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: error.message || 'Failed to update product. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#d33'
+            });
+        }
+    }
+
+    function initFormSubmission() {
+        document.getElementById('addProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateForm()) {
+                submitForm();
+            } else {
+                console.error('Validation failed. Form not submitted.');
+            }
+        });
+    }
+
+    function setActiveMenuItem() {
+        const menuButtons = document.querySelectorAll('.sidebar .nav-button');
+        menuButtons.forEach(button => {
+            button.classList.remove('active');
+            const buttonText = button.textContent.trim().toLowerCase();
+            const routes = {
+                'dashboard': '/admin/dashboard',
+                'products': '/admin/products',
+                'users': '/admin/users',
+                'brands': '/admin/brands',
+                'category': '/admin/category',
+                'orders': '/admin/orders',
+                'coupons': '/admin/coupons',
+                'wallet': '/admin/wallet',
+            };
+            if (buttonText === 'products') {
+                button.classList.add('active');
+            }
+            button.addEventListener('click', () => {
+                const route = routes[buttonText];
+                if (route) {
+                    window.location.href = route;
+                }
+            });
+        });
+    }
+</script>
+    </html>
+    

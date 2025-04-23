@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SwizzTimes-Checkout - Checkout</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,500,700">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <link rel="stylesheet" href="/css/user/checkout.css">
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-outline-secondary mb-3" onclick="window.history.back()">
+            <i class="fa fa-arrow-left"></i> Go Back
+        </button>
+        
+        <div class="main-content">
+            <!-- Left Column: Delivery Address -->
+            <div class="address-section">
+                
+                <h2 class="section-title">Select Delivery Address</h2>
+                
+                <% if (addresses.length > 0) { %>
+                    <% addresses.forEach(function(address) { %>
+                        <div class="address-card" data-address-id="<%= address._id %>">
+                            <div class="radio-custom <%= address.isDefault ? 'selected' : '' %>"></div>
+                
+                            <h3 class="address-title"><%= address.fullName %> (<%= address.addressType %>)</h3>
+                
+                            <p class="address-details">
+                                <%= address.houseNumber %>, <%= address.city %>, <%= address.state %> - <%= address.zipCode %>
+                            </p>
+                            <p class="address-details"><%= address.country %></p>
+                
+                            <p class="address-phone">Phone: <%= address.phone %></p>
+                
+                            <% if (address.isDefault) { %>
+                                <span class="default-badge bg-danger">Default Address</span>
+                            <% } %>
+                
+                           
+                            <div class="address-actions">
+                                <a href="#" class="edit-btn" onclick="editAddress('<%= address._id %>')">EDIT</a>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No addresses found.</p>
+                <% } %>
+
+                <div class="add-address-card" id="add-address-btn">
+                    <div class="add-icon">+</div>
+                    <div>Add address</div>
+                  </div>
+
+
+
+
+
+                <div class="address-form-overlay" id="address-form-overlay">
+                    <div class="address-form">
+                      <div class="form-title">Add a new address</div>
+                      
+                      <div class="form-group">
+                        <label for="full-name">Full Name</label>
+                        <input type="text" id="full-name" name="full-name">
+                        <span class="error-message" id="full-name-error"></span>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                        <span class="error-message" id="phone-error"></span>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="houseNumber">House Number / Building</label>
+                        <input type="text" id="houseNumber" name="houseNumber" placeholder="House number, building number, landmark">
+                        <span class="error-message" id="houseNumber-error"></span>
+                      </div>
+                      
+                      <div class="form-row">
+                        <div class="form-col">
+                          <label for="city">City</label>
+                          <input type="text" id="city" name="city">
+                          <span class="error-message" id="city-error"></span>
+                        </div>
+                        
+                        <div class="form-col">
+                          <label for="state">State</label>
+                          <input type="text" id="state" name="state">
+                          <span class="error-message" id="state-error"></span>
+                        </div>
+                      </div>
+                
+                      <div class="form-row">
+                        <div class="form-col">
+                          <label for="district">District</label>
+                          <input type="text" id="district" name="district">
+                          <span class="error-message" id="district-error"></span>
+                        </div>
+                        
+                        <div class="form-col">
+                          <label for="zip">ZIP</label>
+                          <input type="text" id="zip" name="zip">
+                          <span class="error-message" id="zip-error"></span>
+                        </div>
+                      </div>
+                
+                      <div class="form-row">
+                        <div class="form-col">
+                            <label for="country">Country</label>
+                            <select id="country" name="country">
+                              <option value="">Select a country</option>
+                              <option value="UNITED STATES">United States</option>
+                              <option value="CANADA">Canada</option>
+                              <option value="UNITED KINGDOM">United Kingdom</option>
+                              <option value="INDIA">India</option>
+                              <option value="AUSTRALIA">Australia</option>
+                            </select>
+                            <span class="error-message" id="country-error"></span>
+                        </div>
+                      </div>
+                
+                      <div class="form-col">
+                        <label for="addressType">Address Type</label>
+                        <select id="addressType" name="addressType">
+                          <option value="">Select the address type</option>
+                          <option value="Home">Home</option>
+                          <option value="Work">Work</option>
+                          <option value="Other">Other</option>
+                        </select>
+                        <span class="error-message" id="addressType-error"></span>
+                      </div>
+                
+                      <div class="checkbox-group">
+                        <input type="checkbox" id="default-address" name="default-address">
+                        <label for="default-address">Make this my default address</label>
+                      </div>
+                      
+                      <div class="form-buttons">
+                        <button class="cancel-btn" id="cancel-address-btn">Cancel</button>
+                        <button class="save-btn" id="save-address-btn">Save Address</button>
+                      </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+            
+            <!-- Right Column: Order Summary -->
+            <div class="order-section">
+                <h2 class="section-title">Your Order</h2>
+                
+                <div class="order-box">
+                    <div class="coupon-section">
+                        <!-- <div class="coupon-tag">
+                            <i class="fas fa-tag"></i>
+                            <span>Available Coupons</span>
+                        </div>
+                     -->
+                     <div class="checkout-card">
+                        <div class="section-heading">
+                            <i class="fas fa-tag"></i> Available Coupons
+                        </div>
+                    
+                    
+                    
+                        <!-- Available Coupons -->
+                        <div class="coupon-section">
+                            <div class="coupon-list">
+                                <% if (coupons && coupons.length > 0) { %>
+                                    <% coupons.forEach(coupon => { %>
+                                        <div class="coupon-card" data-coupon="<%= coupon.code %>">
+                                            <div class="coupon-details">
+                                                <div class="coupon-code"><%= coupon.code %></div>
+                                                <p class="coupon-description">
+                                                    <strong><%= coupon.discount %>% Off</strong> 
+                                                    (Max ₹<%= coupon.maxDiscountAmount %>) <br>
+                                                    On orders above ₹<%= coupon.minPurchaseAmount %>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <p>No coupons available at the moment.</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    
+                        <div class="coupon-input-group">
+                            <input type="text" id="coupon-code" class="coupon-input" placeholder="Enter coupon code">
+                            <button id="apply-coupon-btn" class="apply-btn">Apply</button>
+                        </div>
+                    
+                        <p id="coupon-message" class="no-coupons">No coupons applied.</p>
+                        <button id="remove-coupon-btn" class="remove-coupon-btn" style="display: none;">Remove Coupon</button>
+                    </div>
+                    
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Item Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (cart && cart.items.length > 0) { %>
+                                <% cart.items.forEach(item => { %>
+                                    <tr>
+                                        <td>
+                                            <div style="display: flex; align-items: center;">
+                                                <img src="<%= item.product.productImage[0] %>" alt="Product" class="product-image">
+                                                <span class="product-name"><%= item.product.productName %></span>
+                                            </div>
+                                        </td>
+                                        <td><%= item.quantity %></td>
+                                        <td class="price">₹<%= (item.price * item.quantity).toFixed(2) %></td>  
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="3" style="text-align: center;">Your cart is empty.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">₹<%= cart.bill ? cart.bill.toFixed(2) : "0.00" %></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount:</span>
+                        <span id="discount">-₹<%= totalDiscount ? totalDiscount.toFixed(2) : "0.00" %></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Coupon Discount:</span>
+                        <span id="couponDiscount">-₹<%= "0.00" %></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span id="shipping">₹<%= shippingCharge ? shippingCharge.toFixed(2) : "0.00" %></span>
+                    </div>
+                    <div class="summary-row total">
+                        <span><b>Final Total:</b></span>
+                        <span id="finalTotal"><b>₹<%= finalTotal ? finalTotal.toFixed(2) : "0.00" %></b></span>
+                    </div>
+                    
+                    
+                    
+                    <div class="payment-section">
+                        <h2 class="section-title">Payment Method</h2>
+                        
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="cash" class="payment-radio" checked>
+                            <label for="cash" class="payment-label">Cash on Delivery</label>
+                        </div>
+                        
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="razorpay" class="payment-radio">
+                            <label for="razorpay" class="payment-label">Razorpay</label>
+                        </div>
+                        
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="wallet" class="payment-radio">
+                            <label for="wallet" class="payment-label">Wallet</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-dark w-100 mt-3 py-2 fw-medium rounded shadow-sm" onclick="placeOrder()">Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+
+    <script>
+        document.getElementById('add-address-btn').addEventListener('click', function() {
+      document.getElementById('address-form-overlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+    
+  
+    document.getElementById('cancel-address-btn').addEventListener('click', function() {
+      document.getElementById('address-form-overlay').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+    document.getElementById('save-address-btn').addEventListener('click', function(event) {
+        event.preventDefault()
+        document.querySelectorAll(".error-message").forEach(el => el.innerText = "");
+
+    const addressData = {
+        fullName: document.getElementById("full-name").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        houseNumber: document.getElementById("houseNumber").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        state: document.getElementById("state").value.trim(),
+        district: document.getElementById("district").value.trim(),
+        zipCode: document.getElementById("zip").value.trim(),
+        country: document.getElementById("country").value.trim(),
+        addressType: document.getElementById("addressType").value.trim(),
+        isDefault: document.getElementById("default-address").checked
+    };
+
+    
+    let isValid = true;
+
+    if (!addressData.fullName) {
+        document.getElementById("full-name-error").innerText = "Full name is required";
+        isValid = false;
+    }
+
+    if (!addressData.phone.match(/^\d{10,15}$/)) {
+        document.getElementById("phone-error").innerText = "Enter a valid phone number (10-15 digits)";
+        isValid = false;
+    }
+
+    if (!addressData.houseNumber) {
+        document.getElementById("houseNumber-error").innerText = "House number is required";
+        isValid = false;
+    }
+
+    if (!addressData.city) {
+        document.getElementById("city-error").innerText = "City is required";
+        isValid = false;
+    }
+
+    if (!addressData.state) {
+        document.getElementById("state-error").innerText = "State is required";
+        isValid = false;
+    }
+
+    if (!addressData.district) {
+        document.getElementById("district-error").innerText = "District is required";
+        isValid = false;
+    }
+
+    if (!addressData.zipCode.match(/^\d{4,10}$/)) {
+        document.getElementById("zip-error").innerText = "Enter a valid ZIP code";
+        isValid = false;
+    }
+
+    if (!addressData.country) {
+        document.getElementById("country-error").innerText = "Country is required";
+        isValid = false;
+    }
+
+   
+    if (!isValid) return;
+
+    fetch('/swizz-times/user-addresses',{
+        method: "POST",
+            headers: {"Content-Type": "application/json",},
+            body: JSON.stringify(addressData)
+    })
+    .then(res=>res.json())
+    .then(data => {
+            if (data.success) {Swal.fire("Success", "Address saved successfully!", "success");}
+                else {Swal.fire("Error", data.message || "Something went wrong", "error");}
+            }).then((result) => {
+                window.location.reload();
+                if (result) {
+                            // window.location.href = "/swizz-times/user-addresses"; 
+                        }
+                    })
+        .catch(error => {
+            console.error("Error:", error);
+            Swal.fire("Error", "Failed to save address", "error");
+        });
+
+      document.getElementById('address-form-overlay').style.display = 'none';
+      document.body.style.overflow = 'auto'; 
+    });
+    
+    
+    document.getElementById('address-form-overlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+        document.body.style.overflow = 'auto'; 
+      }
+    });
+        
+        document.querySelectorAll('.address-card').forEach(card => {
+            card.addEventListener('click', function() {
+             
+                document.querySelectorAll('.radio-custom').forEach(radio => {
+                    radio.classList.remove('selected');
+                });
+                
+          
+                this.querySelector('.radio-custom').classList.add('selected');
+            });
+        });
+
+        async function editAddress(addressId) {
+    try {
+       
+        const response = await fetch(`/swizz-times/checkout/user-addresses/${addressId}`);
+        const address = await response.json();
+
+        if (!address.success) {
+            return Swal.fire("Error", "Address not found", "error");
+        }
+
+       
+        const { value: formValues } = await Swal.fire({
+            title: "Edit Address",
+            html: `
+                <label for="fullName" class="swal2-label">Full Name</label>
+                <input id="fullName" class="swal2-input" placeholder="Full Name" value="${address.data.fullName}">
+                
+                <label for="phone" class="swal2-label">Phone</label>
+                <input id="phone" class="swal2-input" placeholder="Phone" value="${address.data.phone}"><br>
+                
+                <label for="houseNumber" class="swal2-label">H/N</label>
+                <input id="houseNumber" class="swal2-input" placeholder="House Number" value="${address.data.houseNumber}"><br>
+                
+                <label for="city" class="swal2-label">City</label>
+                <input id="city" class="swal2-input" placeholder="City" value="${address.data.city}"><br>
+                
+                <label for="district" class="swal2-label">District</label>
+                <input id="district" class="swal2-input" placeholder="District" value="${address.data.district}"><br>
+                
+                <label for="state" class="swal2-label">State</label>
+                <input id="state" class="swal2-input" placeholder="State" value="${address.data.state}"><br>
+                
+                <label for="zipCode" class="swal2-label">ZIP Code</label>
+                <input id="zipCode" class="swal2-input" placeholder="ZIP Code" value="${address.data.zipCode}"><br>
+                
+                <label for="country" class="swal2-label">Country</label>
+                <input id="country" class="swal2-input" placeholder="Country" value="${address.data.country}"><br>
+                
+                <label for="addressType" class="swal2-label">Address Type</label>
+                <select id="addressType" class="swal2-select">
+                    <option value="Home" ${address.data.addressType === "Home" ? "selected" : ""}>Home</option>
+                    <option value="Work" ${address.data.addressType === "Work" ? "selected" : ""}>Work</option>
+                    <option value="Other" ${address.data.addressType === "Other" ? "selected" : ""}>Other</option>
+                </select>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: "Save Changes",
+            preConfirm: () => {
+                return {
+                    fullName: document.getElementById("fullName").value.trim(),
+                    phone: document.getElementById("phone").value.trim(),
+                    houseNumber: document.getElementById("houseNumber").value.trim(),
+                    city: document.getElementById("city").value.trim(),
+                    district: document.getElementById("district").value.trim(),
+                    state: document.getElementById("state").value.trim(),
+                    zipCode: document.getElementById("zipCode").value.trim(),
+                    country: document.getElementById("country").value.trim(),
+                    addressType: document.getElementById("addressType").value
+                };
+            }
+        });
+
+        if (!formValues) return;
+
+       
+        const updateResponse = await fetch(`/swizz-times/user-addresses/edit/${addressId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formValues)
+        });
+
+        const updateResult = await updateResponse.json();
+
+        if (updateResult.success) {
+            Swal.fire("Success", "Address updated successfully!", "success").then(() => {
+                location.reload(); 
+            });
+        } else {
+            Swal.fire("Error", updateResult.message || "Failed to update address", "error");
+        }
+    } catch (error) {
+        console.error("Error editing address:", error);
+        Swal.fire("Error", "Something went wrong!", "error");
+    }
+}
+
+async function placeOrder() {
+        try {
+            const selectedAddress = document.querySelector('.radio-custom.selected');
+            if (!selectedAddress) {
+                return Swal.fire("Error", "Please select a delivery address!", "error");
+            }
+
+            const addressId = selectedAddress.closest(".address-card").getAttribute("data-address-id");
+            const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id;
+
+            if (!paymentMethod) {
+                return Swal.fire("Error", "Please select a payment method!", "error");
+            }
+
+            const subtotal = parseFloat(document.getElementById("subtotal")?.innerText.replace("₹", "").trim());
+            const discount = parseFloat(document.getElementById("discount")?.innerText.replace("₹", "").replace("-", "").trim()) || 0;
+            const couponDiscount = parseFloat(document.getElementById("couponDiscount")?.innerText.replace("₹", "").replace("-", "").trim()) || 0;
+            const shippingCharge = parseFloat(document.getElementById("shipping")?.innerText.replace("₹", "").trim()) || 0;
+            const finalTotal = parseFloat(document.getElementById("finalTotal")?.innerText.replace("₹", "").trim());
+
+            if (paymentMethod === "razorpay") {
+                const response = await fetch("/swizz-times/create-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ addressId, paymentMethod, subtotal,couponDiscount, discount, shippingCharge,  finalTotal })
+                });
+
+                const data = await response.json()
+                if (!data.success) {
+                    return Swal.fire("Error", "Failed to create Razorpay order", "error");
+                }
+
+                const options = {
+                    key: "rzp_test_WUj2RKBZ3Xciuu",
+                    amount: data.amount,
+                    currency: "INR",
+                    name: "Swizz Times",
+                    description: "Payment for your order",
+                    order_id: data.razorpayOrderId,
+                    orderId : data.orderId,
+
+                   
+                    handler: async function (response) {
+    const paymentData = {
+        ...response, 
+        addressId : addressId,
+        orderId: data.orderId,
+        orderDetails: {
+            addressId,
+            subtotal,
+            discount,
+            couponDiscount,
+            shippingCharge,
+            finalTotal
+        }
+    };
+
+
+    const verifyResponse = await fetch("/swizz-times/verify-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(paymentData)
+    });
+
+    const verifyData = await verifyResponse.json();
+    if (verifyData.success) {
+        window.location.href = `/swizz-times/order-success/${verifyData.orderId}`;
+    } else {
+        window.location.href = `/swizz-times/order-failure`;
+    }
+},
+theme: { color: "#528FF0" }
+                };
+
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+                rzp1.on('payment.failed', async (response) => {
+                    // console.log(1)
+                        const failureResponse = await fetch(`/swizz-times/handle-payment-failure`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                orderId: data.orderId,
+                                failureReason: response.error.description
+                            })
+                        });
+                        const failureData = await failureResponse.json();
+                        if (failureData.success) {
+                            window.location.href = `/swizz-times/transaction-failure?orderId=${failureData.orderId}`;
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Payment Failed',
+                                text: 'Failed to process payment failure. Please try again.'
+                            });
+                        }
+                    });
+            } else if(paymentMethod === "cash"){
+               
+                const response = await fetch("/swizz-times/checkout/place-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ addressId, paymentMethod, subtotal, discount, couponDiscount, shippingCharge, finalTotal })
+                });
+
+                const data = await response.json()
+                if (data.success) {
+                    window.location.href = `/swizz-times/order-success/${data.orderId}`
+                } else {
+                    Swal.fire("Error", data.message || "Failed to place order", "error")
+                }
+            }else if(paymentMethod === "wallet"){
+                
+                const response = await fetch("/swizz-times/checkout/wallet-placeOrder", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ addressId, paymentMethod, subtotal, discount, couponDiscount, shippingCharge, finalTotal })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = `/swizz-times/order-success/${data.orderId}`;
+                } else {
+                    Swal.fire("Error", data.message || "Failed to place order", "error");
+                }
+            }
+        } catch (error) {
+            console.error("Error placing order:", error);
+            Swal.fire("Error", "Something went wrong!", "error");
+        }
+    }
+
+   
+    document.getElementById("apply-coupon-btn").addEventListener("click", async function () {
+        const couponCode = document.getElementById("coupon-code").value.trim();
+        const cartTotal = parseFloat(document.getElementById("finalTotal").textContent.replace("₹", "").trim());
+
+        if (!couponCode) {
+            return Swal.fire("Error", "Please enter a coupon code!", "error");
+        }
+
+        try {
+            const response = await fetch("/swizz-times/coupon/apply", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: couponCode, cartTotal })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                document.getElementById("couponDiscount").textContent = `- ₹${data.discountAmount}`;
+                document.getElementById("finalTotal").textContent = `₹${data.finalAmount}`;
+                document.getElementById("coupon-message").textContent = `Coupon Applied: ${couponCode}`;
+                document.getElementById("remove-coupon-btn").style.display = "block";
+                document.getElementById("apply-coupon-btn").style.display = "none";
+                Swal.fire("Success", data.message, "success");
+            } else {
+                Swal.fire("Error", data.message, "error");
+            }
+
+        } catch (error) {
+            console.error("Error applying coupon:", error);
+            Swal.fire("Error", "Something went wrong!", "error");
+        }
+    });
+
+    document.getElementById("remove-coupon-btn").addEventListener("click", async function () {
+        const cartTotal = parseFloat(document.getElementById("finalTotal").textContent.replace("₹", "").trim());
+
+        try {
+            const response = await fetch("/swizz-times/coupon/remove", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cartTotal })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                document.getElementById("discount").textContent = "- ₹0.00";
+                document.getElementById("finalTotal").textContent = `₹${data.finalAmount}`;
+                document.getElementById("coupon-message").textContent = "No coupons applied.";
+                document.getElementById("remove-coupon-btn").style.display = "none";
+                document.getElementById("apply-coupon-btn").style.display = "block";
+                Swal.fire("Success", "Coupon removed!", "success");
+            } else {
+                Swal.fire("Error", data.message, "error");
+            }
+        } catch (error) {
+            console.error("Error removing coupon:", error);
+            Swal.fire("Error", "Something went wrong!", "error");
+        }
+    });
+
+
+
+
+    </script>
+</body>
+</html>

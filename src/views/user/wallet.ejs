@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWIZZ-TIMES Wallet</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --success: #10b981;
+      --danger: #ef4444;
+      --neutral: #6b7280;
+      --light: #f3f4f6;
+      --dark: #1f2937;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .breadcrumb {
+      margin-bottom: 20px;
+      color: #555;
+    }
+    
+    .breadcrumb a {
+      color: #e47911;
+      text-decoration: none;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .wallet-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    
+    .wallet-header {
+      background-color: var(--primary);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    .balance-label {
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+    
+    .balance-amount {
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .wallet-actions {
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      background-color: #f3f4f6;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .action-button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      margin: 0 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .action-button:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .transaction-history {
+      padding: 20px;
+    }
+    
+    .history-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--dark);
+    }
+    
+    .transaction-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .transaction-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background-color: #f3f4f6;
+      font-weight: 600;
+      color: var(--neutral);
+      font-size: 14px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .transaction-table td {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .transaction-id {
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--neutral);
+    }
+    
+    .transaction-date {
+      color: var(--neutral);
+      font-size: 14px;
+    }
+    
+    .transaction-type {
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 100px;
+      display: inline-block;
+      font-size: 14px;
+    }
+    
+    .type-credit {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .type-debit {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+    
+    .transaction-amount {
+      font-weight: 600;
+      text-align: right;
+    }
+    
+    .amount-credit {
+      color: var(--success);
+    }
+    
+    .amount-debit {
+      color: var(--danger);
+    }
+    
+    .transaction-status {
+      font-size: 14px;
+      text-align: center;
+    }
+    
+    .status-completed {
+      color: var(--success);
+    }
+    
+    .status-pending {
+      color: #f59e0b;
+    }
+    
+    .status-failed {
+      color: var(--danger);
+    }
+    
+    .no-transactions {
+      text-align: center;
+      padding: 30px;
+      color: var(--neutral);
+    }
+  </style>
+</head>
+<body>
+  <div class="breadcrumb">
+    <a href="/swizz-times">Home</a> › Your Wallet
+  </div>
+  
+  <button class="btn btn-outline-secondary mb-3" onclick="window.history.back()">
+    <i class="fa fa-arrow-left"></i> Go Back
+  </button>
+
+  <div class="container">
+    <div class="wallet-card">
+      <div class="wallet-header">
+        <div class="balance-label">Wallet Balance</div>
+        <div class="balance-amount">₹<%= wallet.balance.toFixed(2) %></div> <!-- ✅ Dynamic Balance -->
+      </div>
+
+      <!-- <div class="wallet-actions">
+        <button class="action-button">Add Money</button>
+        <button class="action-button">Withdraw</button>
+      </div> -->
+
+      <div class="transaction-history">
+        <h2 class="history-title">Transaction History</h2>
+
+        <table class="transaction-table">
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (wallet.transactions.length === 0) { %>
+              <tr><td colspan="5" class="no-transactions">No transactions yet</td></tr>
+            <% } else { %>
+              <% wallet.transactions.forEach(transaction => { %>
+                <tr>
+                  <td class="transaction-id"><%= transaction.transactionId %></td>
+                  <td class="transaction-date"><%= new Date(transaction.createdAt).toLocaleDateString() %></td>
+                  <td><span class="transaction-type <%= transaction.type === 'Credit' ? 'type-credit' : 'type-debit' %>">
+                    <%= transaction.type %>
+                  </span></td>
+                  <td class="transaction-amount <%= transaction.type === 'Credit' ? 'amount-credit' : 'amount-debit' %>">
+                    <%= transaction.type === 'Credit' ? '+' : '-' %>₹<%= transaction.amount.toFixed(2) %>
+                  </td>
+                  <td class="transaction-status status-<%= transaction.status.toLowerCase() %>">
+                    <%= transaction.status %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <div class="text-center mt-4">
+        <% if (totalPages > 1) { %>
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+              <% if (currentPage > 1) { %>
+                <li class="page-item">
+                  <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                </li>
+              <% } %>
+      
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                  <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                </li>
+              <% } %>
+      
+              <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                  <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                </li>
+              <% } %>
+            </ul>
+          </nav>
+        <% } %>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>

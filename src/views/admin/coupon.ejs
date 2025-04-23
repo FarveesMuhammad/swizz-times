@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swizz Times - Coupons</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/admin/adminCategory.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* Custom Styles */
+        .container {
+            display: flex;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 250px; /* Adjust based on sidebar width */
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table th, .table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Admin Sidebar -->
+        <%- include('../partials/admin/admin_sidebar') %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header d-flex justify-content-between align-items-center">
+                <h1>Coupon Management</h1>
+                <button class="logout-button" onclick="window.location.href='/admin/logout'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+
+            <!-- Coupon Creation Form -->
+            <div class="card mt-4">
+                <h5 class="mb-3">Create New Coupon</h5>
+                <form id="couponForm">
+                    <div class="mb-3">
+                        <label for="code" class="form-label">Coupon Code</label>
+                        <input type="text" id="code" class="form-control" placeholder="Enter coupon code" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="discount" class="form-label">Discount (%)</label>
+                        <input type="number" id="discount" class="form-control" min="1" max="100" placeholder="Enter discount percentage" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="minPurchaseAmount" class="form-label">Minimum Purchase Amount</label>
+                        <input type="number" id="minPurchaseAmount" class="form-control" min="0" placeholder="Enter minimum purchase amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="maxDiscountAmount" class="form-label">Maximum Discount Amount</label>
+                        <input type="number" id="maxDiscountAmount" class="form-control" min="0" placeholder="Enter maximum discount amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                        <input type="date" id="expiryDate" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Coupon</button>
+                </form>
+            </div>
+
+            <!-- Coupon List Table -->
+            <div class="card mt-4">
+                <h5 class="mb-3">Coupon List</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Discount (%)</th>
+                            <th>Min Purchase</th>
+                            <th>Max Discount</th>
+                            <th>Expiry Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% coupons.forEach(coupon => { %>
+                            <tr>
+                                <td><%= coupon.code %></td>
+                                <td><%= coupon.discount %>%</td>
+                                <td>₹<%= coupon.minPurchaseAmount %></td>
+                                <td>₹<%= coupon.maxDiscountAmount %></td>
+                                <td><%= coupon.expiryDate.toISOString().split('T')[0] %></td>
+                                <td>
+                                    <button 
+                                        class="action-btn edit-btn"
+                                        onclick='editCoupon({
+                                            _id: "<%= coupon._id %>",
+                                            code: "<%= coupon.code %>",
+                                            discount: <%= coupon.discount %>,
+                                            minPurchaseAmount: <%= coupon.minPurchaseAmount %>,
+                                            maxDiscountAmount: <%= coupon.maxDiscountAmount %>,
+                                            expiryDate: "<%= coupon.expiryDate.toISOString().split("T")[0] %>"
+                                        })'>
+                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                          </svg>
+                                    </button>
+                                    <% if (coupon.isActive) { %>
+                                        <button class="btn btn-warning btn-sm" onclick="toggleStatus('<%= coupon._id %>')">Deactivate</button>
+                                    <% } else { %>
+                                        <button class="btn btn-success btn-sm" onclick="toggleStatus('<%= coupon._id %>')">Activate</button>
+                                    <% } %>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteCoupon('<%= coupon._id %>')">Delete</button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setActiveMenuItem() {
+            const currentPath = window.location.pathname.toLowerCase();
+            const menuButtons = document.querySelectorAll('.sidebar .nav-button');
+
+            menuButtons.forEach(button => {
+                button.classList.remove('active');
+                const buttonText = button.textContent.trim().toLowerCase();
+
+                if (currentPath.includes(buttonText)) {
+                    button.classList.add('active');
+                }
+
+                button.addEventListener('click', () => {
+                    const routes = {
+                        "dashboard": "/admin/dashboard",
+                        "product": "/admin/products",
+                        "users": "/admin/users",
+                        "brands": "/admin/brands",
+                        "category": "/admin/category",
+                        "orders": "/admin/orders",
+                        "coupons": "/admin/coupons",
+                        "wallet": "/admin/wallet"
+                    };
+
+                    const route = routes[buttonText];
+                    if (route) {
+                        window.location.href = route;
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setActiveMenuItem();
+            document.getElementById("couponForm").addEventListener("submit", createCoupon);
+        });
+
+        function editCoupon(coupon) {
+            const { _id, code, discount, minPurchaseAmount, maxDiscountAmount, expiryDate } = coupon;
+            const formattedExpiry = new Date(expiryDate).toISOString().split('T')[0];
+
+            Swal.fire({
+                title: 'Edit Coupon',
+                html:
+                    `<label for="swal-code" class="form-label">Coupon Code</label>` +
+                    `<input id="swal-code" class="swal2-input" value="${code}" readonly>` +
+                    `<label for="swal-discount" class="form-label">Discount (%)</label>` +
+                    `<input id="swal-discount" type="number" class="swal2-input" value="${discount}" min="1" max="100" required> ` +
+                    `<label for="swal-min" class="form-label">Minimum Purchase Amount</label><br>` +
+                    `<input id="swal-min" type="number" class="swal2-input" value="${minPurchaseAmount}" min="0" required>` +
+                    `<label for="swal-max" class="form-label">Maximum Discount Amount</label>` +
+                    `<input id="swal-max" type="number" class="swal2-input" value="${maxDiscountAmount}" min="0" required>` +
+                    `<label for="swal-expiry" class="form-label">Expiry Date</label>` +
+                    `<input id="swal-expiry" type="date" class="swal2-input" value="${formattedExpiry}" required>`,
+                showCancelButton: true,
+                confirmButtonText: 'Update Coupon',
+                focusConfirm: false,
+                preConfirm: async () => {
+                    const discountValue = parseInt(document.getElementById('swal-discount').value);
+                    const minPurchaseAmount = parseInt(document.getElementById('swal-min').value);
+                    const maxDiscountAmount = parseInt(document.getElementById('swal-max').value);
+                    const expiryDate = document.getElementById('swal-expiry').value;
+
+                    if (isNaN(discountValue) || discountValue < 1 || discountValue > 99) {
+                        Swal.showValidationMessage('Discount must be between 1 and 100');
+                        return false;
+                    }
+                    if (isNaN(minPurchaseAmount) || minPurchaseAmount < 0) {
+                        Swal.showValidationMessage('Minimum purchase amount cannot be negative');
+                        return false;
+                    }
+                    if (isNaN(maxDiscountAmount) || maxDiscountAmount < 0) {
+                        Swal.showValidationMessage('Maximum discount amount cannot be negative');
+                        return false;
+                    }
+                    if (!expiryDate) {
+                        Swal.showValidationMessage('Expiry date is required');
+                        return false;
+                    }
+
+                    const updatedData = {
+                        discount: discountValue,
+                        minPurchaseAmount,
+                        maxDiscountAmount,
+                        expiryDate
+                    };
+
+                    try {
+                        const response = await fetch(`/admin/coupons/${_id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updatedData)
+                        });
+
+                        const result = await response.json();
+                        if (!response.ok) throw new Error(result.error || 'Update failed');
+                        return result;
+                    } catch (error) {
+                        Swal.showValidationMessage(error.message);
+                    }
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    Swal.fire("Updated!", "Coupon details updated successfully.", "success")
+                        .then(() => location.reload());
+                }
+            });
+        }
+
+        async function createCoupon(event) {
+            event.preventDefault();
+
+            const code = document.getElementById("code").value.toUpperCase();
+            const discount = parseInt(document.getElementById("discount").value);
+            const minPurchaseAmount = parseInt(document.getElementById("minPurchaseAmount").value);
+            const maxDiscountAmount = parseInt(document.getElementById("maxDiscountAmount").value);
+            const expiryDate = document.getElementById("expiryDate").value;
+
+            if (!code || isNaN(discount) || isNaN(minPurchaseAmount) || isNaN(maxDiscountAmount) || !expiryDate) {
+                Swal.fire("Error", "All fields are required!", "error");
+                return;
+            }
+
+            if (discount < 1 || discount > 100) {
+                Swal.fire("Error", "Discount must be between 1 and 100!", "error");
+                return;
+            }
+
+            if (minPurchaseAmount < 0) {
+                Swal.fire("Error", "Minimum purchase amount cannot be negative!", "error");
+                return;
+            }
+
+            if (maxDiscountAmount < 0) {
+                Swal.fire("Error", "Maximum discount amount cannot be negative!", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch("/admin/coupons", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        code, 
+                        discount, 
+                        minPurchaseAmount, 
+                        maxDiscountAmount, 
+                        expiryDate 
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire("Success", data.message, "success").then(() => location.reload());
+                } else {
+                    Swal.fire("Error", data.error, "error");
+                }
+            } catch (error) {
+                console.error("Error creating coupon:", error);
+                Swal.fire("Error", "Something went wrong!", "error");
+            }
+        }
+
+        async function deleteCoupon(couponId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This action cannot be undone!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/coupons/${couponId}`, { method: "DELETE" });
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            Swal.fire("Deleted!", data.message, "success").then(() => location.reload());
+                        } else {
+                            Swal.fire("Error", data.error, "error");
+                        }
+                    } catch (error) {
+                        console.error("Error deleting coupon:", error);
+                        Swal.fire("Error", "Something went wrong!", "error");
+                    }
+                }
+            });
+        }
+
+        async function toggleStatus(couponId) {
+            try {
+                const response = await fetch(`/admin/coupons/${couponId}/status`, { method: "PATCH" });
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire("Updated", data.message, "success").then(() => location.reload());
+                } else {
+                    Swal.fire("Error", data.error, "error");
+                }
+            } catch (error) {
+                console.error("Error toggling coupon status:", error);
+                Swal.fire("Error", "Something went wrong!", "error");
+            }
+        }
+    </script>
+</body>
+</html>

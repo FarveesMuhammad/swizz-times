@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Swizz Times - Users</title>
+    <link rel="stylesheet" href="/css/admin/adminUsers.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <%- include('../partials/admin/admin_sidebar') %>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Users</h1>
+                <button class="logout-button" onclick="window.location.href='/admin/logout'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+            <div class="search-container">
+                <form id="searchForm">
+                    <input type="text" name="search" id="searchInput" placeholder="Search users..." 
+                           class="search-input" value="<%= search %>">
+                    <button type="submit" class="search-btn" id="searchBtn">Search</button>
+                    <% if (search) { %>
+                        <button type="button" class="clear-btn" id="clearSearchBtn">Clear</button>
+                    <% } %>
+                </form>
+            </div>
+
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach((user, index) => { %>
+                        <tr>
+                            <td><%= (currentPage - 1) * limit + index + 1 %></td>
+                            <td><%= user.username %></td>
+                            <td><%= user.email %></td>
+                            <td class="status"><%= user.isBlocked ? "Blocked" : "Active" %></td>
+                            <td>
+                                <button class="toggle-status-btn" data-user-id="<%= user._id %>">
+                                    <%= user.isBlocked ? "Unblock" : "Block" %>
+                                </button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>&search=<%= search %>">Prev</a>
+                <% } %>
+
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="?page=<%= i %>&search=<%= search %>" class="<%= currentPage === i ? 'active' : '' %>">
+                        <%= i %>
+                    </a>
+                <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>&search=<%= search %>">Next</a>
+                <% } %>
+            </div>
+
+            <a href="/admin/dashboard" class="go-back">Go back</a>
+        </div>
+    </div>
+
+    <script>
+        function setActiveMenuItem() {
+            const currentPath = window.location.pathname.toLowerCase();
+            const menuButtons = document.querySelectorAll('.sidebar .nav-button');
+    
+            menuButtons.forEach(button => {
+                button.classList.remove('active');
+                const buttonText = button.textContent.trim().toLowerCase();
+    
+                if (currentPath.includes(buttonText)) {
+                    button.classList.add('active');
+                }
+    
+                button.addEventListener('click', () => {
+                    const routes = {
+                        "dashboard": "/admin/dashboard",
+                        "product": "/admin/products",
+                        "users": "/admin/users",
+                        "brands": "/admin/brands",
+                        "category": "/admin/category",
+                        "orders": "/admin/orders",
+                        "coupons": "/admin/coupons",
+                        "wallet": "/admin/wallet"
+                    };
+    
+                    const route = routes[buttonText];
+                    if (route) {
+                        window.location.href = route;
+                    }
+                });
+            });
+        }
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            setActiveMenuItem();
+    
+            // Handle form submission
+            const searchForm = document.getElementById('searchForm');
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const searchValue = document.getElementById('searchInput').value.trim();
+                window.location.href = `/admin/users?search=${encodeURIComponent(searchValue)}`;
+            });
+    
+            // Handle clear button click
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', () => {
+                    window.location.href = '/admin/users';
+                });
+            }
+    
+            // Handle block/unblock buttons
+            document.querySelectorAll('.toggle-status-btn').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const userId = button.getAttribute('data-user-id');
+    
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: "Cancel"
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                const response = await fetch('/admin/users/block-unblock', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ userId })
+                                });
+    
+                                const result = await response.json();
+    
+                                if (result.success) {
+                                    button.textContent = result.isBlocked ? 'Unblock' : 'Block';
+                                    button.closest('tr').querySelector('.status').textContent = result.isBlocked ? 'Blocked' : 'Active';
+                                    Swal.fire('Updated!', 'User status has been changed.', 'success');
+                                } else {
+                                    Swal.fire("Error", "Failed to update status.", "error");
+                                }
+                            } catch (error) {
+                                console.error("Error:", error);
+                                Swal.fire("Error", "Something went wrong.", "error");
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

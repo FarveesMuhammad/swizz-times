@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    <link rel="stylesheet" href="/css/user/userDetails.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="breadcrumbs">
+        <a href="/swizz-times">Home</a>
+        <span class="separator">›</span>
+        <span class="current">Profile</span>
+    </div>
+    <button class="btn btn-outline-secondary mb-3" onclick="window.history.back()">
+        <i class="fa fa-arrow-left"></i> Go Back
+    </button>
+    <div class="container">
+        <div class="header">
+            <div class="profile-section">
+                <div class="profile-pic">
+                    <% if (user.profilePicture) { %>
+                        <img src="<%= user.profilePicture %>" alt="Profile Picture">
+                    <% } else { %>
+                        <img src="https://via.placeholder.com/120" alt="Default Profile Picture">
+                    <% } %>
+                </div>
+                <div class="user-name"><%= user.fullname %></div>
+                <div class="user-email"><%= user.email %></div>
+                <div class="user-status"><% if(user.isBlocked){ %>
+                Not Active
+                <% }else{ %>
+                    Active
+                <% } %>
+            </div>
+            </div>
+        </div>
+        
+        <div class="details-container">
+            <div class="detail-section">
+                <h2 class="section-title">Personal Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value"><%= user.fullname %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value"><%= user.email %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Phone Number</div>
+                        <div class="info-value"><%= user.mobile %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Date of Birth</div>
+                        <div class="info-value"><%= user.dob %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Member Since</div>
+                        <div class="info-value"><%= new Date(user.createdAt).toDateString() %></div>
+                    </div>
+                    
+                </div>
+            </div>
+          
+            <% if(address.length > 0){ %>  
+                <% address.forEach(function(addr){ %>
+                    <div class="detail-section">
+                        <h2 class="section-title">Addresses</h2>
+                        <div class="address-box">
+                            <div class="address-type">
+                                <span><%= addr.addressType %></span>
+                                <% if(addr.isDefault) { %>
+                                    <span class="address-default">Default</span>
+                                <% } %>
+                            </div>
+                            <div class="address-text">
+                                <%= addr.houseNumber %>, <%= addr.city %>, <%= addr.state %> <br>
+                                <%= addr.zipCode %>, <%= addr.country %> <br>
+                                Contact: <%= addr.phone %>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No addresses found.</p>
+            <% } %>
+            
+        
+        <div class="actions">
+            <button class="primary" onclick="window.location.href='/swizz-times/editUser'">Edit Profile</button>
+        </div>
+    </div>
+</body>
+</html>

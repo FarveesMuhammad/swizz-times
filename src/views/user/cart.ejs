@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwizzTimes-Cart</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap"
+    rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/shop.css">
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
+    
+    .breadcrumb {
+      background-color: transparent;
+      padding-left: 0;
+      margin-top: 20px;
+    }
+    
+    .breadcrumb-item a {
+      color: #007bff;
+      font-weight: 500;
+    }
+    
+    .cart-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      border: none;
+      overflow: hidden;
+    }
+    
+    .cart {
+      padding: 30px;
+      background-color: #fff;
+    }
+    
+    .title h4 {
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 700;
+    }
+    
+    .main {
+      margin-bottom: 20px;
+      padding: 15px 0;
+      border-bottom: 1px solid #f1f1f1;
+    }
+    
+    .main:last-child {
+      border-bottom: none;
+    }
+    
+    .product-img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    
+    .product-name {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    
+    .product-price {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    
+    .quantity-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #333;
+      transition: all 0.3s;
+    }
+    
+    .quantity-btn:hover {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    
+    .quantity-value {
+      margin: 0 10px;
+      font-weight: 600;
+      width: 30px;
+      text-align: center;
+    }
+    
+    .stock-info {
+      color: #777;
+      font-size: 13px;
+    }
+    
+    .item-total {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .remove-btn {
+      cursor: pointer;
+      color: #dc3545;
+      margin-left: 10px;
+      transition: all 0.3s;
+    }
+    
+    .remove-btn:hover {
+      color: #c82333;
+    }
+    
+    .back-to-shop {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .back-to-shop a {
+      margin-right: 10px;
+      width: 30px;
+      height: 30px;
+      background-color: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #333;
+      transition: all 0.3s;
+    }
+    
+    .back-to-shop a:hover {
+      background-color: #007bff;
+      color: white;
+    }
+    
+    .summary {
+      background-color: #f8f9fa;
+      padding: 30px;
+      border-radius: 0 15px 15px 0;
+    }
+    
+    .summary h5 {
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: #333;
+    }
+    
+    .summary hr {
+      margin: 15px 0;
+    }
+    
+    .checkout-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 0;
+      width: 100%;
+      margin-top: 20px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .checkout-btn:hover {
+      background-color: #0069d9;
+      transform: translateY(-2px);
+    }
+    
+    .empty-cart {
+      text-align: center;
+      padding: 50px 0;
+    }
+    
+    .empty-cart i {
+      font-size: 60px;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+    
+    .empty-cart p {
+      font-size: 18px;
+      color: #777;
+      margin-bottom: 20px;
+    }
+    
+    .shop-now-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 30px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .shop-now-btn:hover {
+      background-color: #0069d9;
+    }
+    
+    @media (max-width: 767px) {
+      .card {
+        border-radius: 15px;
+      }
+      
+      .summary {
+        border-radius: 0 0 15px 15px;
+      }
+      
+      .product-img {
+        width: 60px;
+        height: 60px;
+      }
+    }
+    #clickSwitch{
+        cursor: pointer;
+     }
+  </style>
+</head>
+<body>
+    
+
+  <!-- =================================================Navbar========================================================== -->
+
+
+  <%- include('../partials/user/navbar') %>
+    
+    <% if (cart && cart.items.length > 0) { %>
+      <div class="card container">
+        <div class="row no-gutters">
+          <div class="col-md-8 cart">
+            <button class="btn btn-outline-secondary mb-3" onclick="window.history.back()">
+              <i class="fa fa-arrow-left"></i> Go Back
+          </button>
+            <div class="title">
+              <div class="row">
+                <div class="col">
+                  <h4><b>Shopping Cart</b></h4>
+                </div>
+                <div class="col align-self-center text-right text-muted">
+                  <%= cart.items.length %> item<%= cart.items.length > 1 ? 's' : '' %>
+                </div>
+              </div>
+            </div>    
+        
+            <% cart.items.forEach(item => { %>
+              <div class="row main align-items-center">
+                <div class="col-2">
+                  <img class="img-fluid product-img" src="<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>">
+                </div>
+                <div class="col-4">
+                  <div class="product-name"><%= item.product.productName %></div>
+                  <div class="product-price">₹<%= item.price.toFixed(2) %></div>
+                </div>
+                <div class="col-3">
+                  <div class="quantity-control">
+                    <button class="quantity-btn" onclick="updateQuantity('<%= item.product._id %>', -1)">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="quantity-value" data-quantity-id="<%= item.product._id %>"><%= item.quantity %></span>
+                    <button class="quantity-btn" onclick="updateQuantity('<%= item.product._id %>', 1)">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                  <div class="stock-info">
+                    Stock: <span data-stock-id="<%= item.product._id %>"><%= item.product.quantity %></span>
+                  </div>
+                </div>
+                <div class="col-3 text-right">
+                  <span class="item-total">₹<%= (item.price * item.quantity).toFixed(2) %></span>
+                  <span class="remove-btn" onclick="removeFromCart('<%= item.product._id %>')">
+                    <i class="fas fa-trash-alt"></i>
+                  </span>
+                </div>
+            </div>
+            <% }) %>
+            
+            
+            <div class="col-md-4 summary">
+              <div><h5><b>Order Summary</b></h5></div>
+              <!-- <hr>
+              <div class="row">
+                <div class="col" style="padding-left:0;">Items (<%= cart.items.length %>)</div>
+                <div class="col text-right">₹<%= cart.bill.toFixed(2) %></div>
+              </div>
+            
+              <hr> -->
+              <div class="row" style="font-weight:700;">
+                <div class="col" style="padding-left:0;">TOTAL</div>
+                <div class="col text-right">₹<%= cart.bill.toFixed(2) %></div>
+              </div>
+              
+              <button class="btn checkout-btn" onclick="checkout()">
+                PROCEED TO CHECKOUT
+              </button>
+            </div>
+        </div>
+        
+    </div>
+    <div class="back-to-shop">
+        <a href="/swizz-times/shop"><i class="fas fa-arrow-left"></i></a>
+        <span class="text-muted">Back to shop</span>
+      </div>
+</div>
+    <% } else { %>
+      <div class="card">
+        <div class="empty-cart">
+          <i class="fas fa-shopping-cart"></i>
+          <p>Your cart is empty</p>
+          <a href="/swizz-times/shop" class="btn shop-now-btn">Shop Now</a>
+        </div>
+      </div>
+    <% } %>
+  </div>
+  <%- include('../partials/user/footer') %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> -->
+  <script>
+    async function updateQuantity(productId, change) {
+      const quantityElement = document.querySelector(`[data-quantity-id="${productId}"]`);
+      const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);
+      
+      let currentQuantity = parseInt(quantityElement.textContent);
+      let stockAvailable = parseInt(stockElement.textContent);
+
+      if(change === 1 && currentQuantity >= 5){
+        Swal.fire({
+          title: "Stock Limited",
+          text: "Maximum purchase Qty reached",
+          icon: "warning",
+          confirmButtonColor: "#007bff"
+        });
+        return;
+      }
+      
+      if (change === 1 && currentQuantity >= stockAvailable) {
+        Swal.fire({
+          title: "Stock Limited",
+          text: "Cannot add more items, stock is limited!",
+          icon: "warning",
+          confirmButtonColor: "#007bff"
+        });
+        return;
+      }
+    
+      if (change === -1 && currentQuantity <= 1) {
+        Swal.fire({
+          title: "Minimum Quantity",
+          text: "Quantity cannot be less than 1",
+          icon: "info",
+          confirmButtonColor: "#007bff"
+        });
+        return;
+      }
+     
+    
+      try {
+        const response = await fetch(`/swizz-times/cart/update`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId, change })
+        });
+    
+        const data = await response.json();
+        if (data.success) {
+          location.reload();
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: data.message || "Failed to update quantity",
+            icon: "error",
+            confirmButtonColor: "#007bff"
+          });
+        }
+      } catch (error) {
+        console.error("Error updating cart:", error);
+        Swal.fire({
+          title: "Error",
+          text: "Something went wrong. Please try again.",
+          icon: "error",
+          confirmButtonColor: "#007bff"
+        });
+      }
+    }
+    
+    async function removeFromCart(productId) {
+      const confirmDelete = await Swal.fire({
+        title: "Remove Item",
+        text: "Do you want to remove this item from your cart?",
+        icon: "question",
+        showCancelButton: true,      
+        confirmButtonColor: "#dc3545",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, remove it",
+        cancelButtonText: "Cancel"
+      });
+    
+      if (confirmDelete.isConfirmed) {
+        try {
+          const response = await fetch(`/swizz-times/cart/remove/${productId}`, { method: "DELETE" });
+          const data = await response.json();
+          if (data.success) {
+            Swal.fire({
+              title: "Removed!",
+              text: "The item has been removed from your cart.",
+              icon: "success",
+              confirmButtonColor: "#007bff"
+            }).then(() => location.reload()); 
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: "Failed to remove item",
+              icon: "error",
+              confirmButtonColor: "#007bff"
+            });
+          }
+        } catch (error) {
+          console.error("Error removing item:", error);
+          Swal.fire({
+            title: "Error",
+            text: "Something went wrong. Please try again.",
+            icon: "error",
+            confirmButtonColor: "#007bff"
+          });
+        }
+      }
+    }
+
+    function checkout() {
+  const quantityElements = document.querySelectorAll("[data-quantity-id]");
+  let hasInvalidQuantity = false;
+
+  quantityElements.forEach(el => {
+    const quantity = parseInt(el.textContent);
+    if (quantity > 5) {
+      hasInvalidQuantity = true;
+    }
+  });
+
+  if (hasInvalidQuantity) {
+    Swal.fire({
+      title: "Quantity Limit Exceeded",
+      text: "Items in your cart exceed the maximum allowed quantity (5).",
+      icon: "warning",
+      confirmButtonColor: "#007bff"
+    });
+    return;
+  }
+
+  
+  window.location.href = "/swizz-times/checkout";
+}
+
+  </script>
+</body>
+</html>

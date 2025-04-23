@@ -1,0 +1,369 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Mukta', sans-serif;
+}
+
+body {
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.login-alert {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 30px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.login-alert a {
+    color: #7971ea;
+    text-decoration: none;
+}
+
+.main-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.address-section, .order-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #333;
+}
+.add-address-card {
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 250px;
+  }
+  
+  .add-address-card:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .add-icon {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 15px;
+  }
+  
+
+/* Address cards */
+.address-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.address-title {
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.address-details {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.address-phone {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.edit-btn {
+    display: inline-block;
+    padding: 5px 20px;
+    background: #fff;
+    color: #7971ea;
+    border: 1px solid #7971ea;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.radio-custom {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 20px;
+    width: 20px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+}
+
+.radio-custom.selected {
+    border-color: #7971ea;
+}
+
+.radio-custom.selected::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #7971ea;
+}
+
+/* Order section */
+.order-box {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.coupon-section {
+    margin-bottom: 20px;
+}
+
+.coupon-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.coupon-input-group {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.coupon-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+}
+
+.apply-btn {
+    padding: 10px 20px;
+    background: #7971ea;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.no-coupons {
+    color: #888;
+    font-size: 14px;
+    margin: 15px 0;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.product-table th {
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    font-weight: 500;
+}
+
+.product-table td {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+    border-radius: 4px;
+}
+
+.product-name {
+    font-size: 14px;
+    color: #333;
+}
+
+.price {
+    font-weight: 500;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+/* Payment methods */
+.payment-section {
+    margin-top: 30px;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.payment-radio {
+    margin-right: 10px;
+    position: relative;
+    height: 20px;
+    width: 20px;
+}
+
+.payment-label {
+    font-size: 15px;
+}
+ /* Form Styles */
+ .address-form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 40px 0;
+  }
+  
+  .address-form {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    margin: auto;
+  }
+  
+  .form-title {
+    font-size: 20px;
+    margin-bottom: 25px;
+    font-weight: bold;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  
+  .form-group input, 
+  .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #e47911;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(228, 121, 17, 0.2);
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .form-col {
+    flex: 1;
+  }
+  
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .form-buttons button {
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .cancel-btn {
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    color: #333;
+  }
+  
+  .save-btn {
+    background-color: #febd69;
+    border: 1px solid #f0ad4e;
+    color: #111;
+    font-weight: bold;
+  }
+  
+  .save-btn:hover {
+    background-color: #f5a623;
+  }
+  
+  .checkbox-group {
+    margin-top: 20px;
+  }
+  
+  .checkbox-group input {
+    margin-right: 10px;
+    width: auto;
+  }.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+}

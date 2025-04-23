@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Details - Swizz Times</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .transaction-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .detail-section {
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .detail-section p {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .detail-section span {
+            font-weight: bold;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .btn-order {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="transaction-container">
+            <div class="header">
+                Transaction ID: <%= transaction.transactionId %>
+            </div>
+
+            <div class="detail-section">
+                <h5>User Details:</h5>
+                <p>Name: <span><%= user.username %></span></p>
+                <p>Email: <span><%= user.email %></span></p>
+                <p>Phone: <span><%= user.mobile %></span></p>
+
+                <hr>
+
+                <h5>Transaction Details:</h5>
+         
+                <p>Amount: ₹<span><%= transaction.amount.toFixed(2) %></span></p>
+                <p>Transaction Type: <span><%= transaction.type %></span></p>
+                <p>Status: <span class="text-primary"><%= transaction.status %></span></p>
+
+                <hr>
+
+                <h5>Source:</h5>
+                <% if (relatedOrder && (relatedOrder.orderStatus === 'Cancelled' || relatedOrder.orderStatus === 'Returned')) { %>
+                  <p>Taransaction is due to  <strong><%= relatedOrder.orderStatus %></strong> for Order ID: <%= relatedOrder.orderId %></p>
+                  <a href="/admin/orderDetails/<%=  relatedOrder._id %>" class="btn btn-info btn-order">View Related Order</a>
+                <% } else { %>
+                  <p>N/A</p>
+                <% } %>
+                
+            </div>
+
+            <div class="back-button">
+                <a href="/admin/wallet" class="btn btn-dark"><i class="fas fa-arrow-left"></i> Back to Transactions</a>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

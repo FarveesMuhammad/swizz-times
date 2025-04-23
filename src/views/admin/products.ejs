@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swizz Times - Products</title>
+    <link rel="stylesheet" href="/css/admin/admin_products.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <%- include("../partials/admin/admin_sidebar") %>
+        <div class="main-content">
+            <div class="header">
+                <h1>Product</h1>
+                <button class="logout-button" onclick="window.location.href='/admin/logout'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+            <div class="search-container">
+                <!-- <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search by product name, category, or brand" class="search-input">
+                    <button id="searchButton" class="add-button">Search</button>
+                </div> -->
+                <button id="addProductBtn" class="add-button" >ADD+</button>
+            </div>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Regular Price</th>
+                        <th>Sale Price</th>
+                        <th>Stock</th>
+                        <th>Offer</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% productData.forEach((product, index) => {
+                        const productName = product.productName || 'Unnamed Product';
+                        const categoryName = product.category?.name || 'Category Not Available';
+                        const brandName = product.brand?.brandName || 'Brand Not Available';
+                        const brandId = product.brand?._id || '';
+                        const categoryId = product.category?._id || '';
+                        const description = product.description ? product.description.replace(/"/g, '&quot;') : '';
+                        const regularPrice = product.regularPrice ?? 0;
+                        const salePrice = product.salePrice ?? 0;
+                        const quantity = product.quantity ?? 0;
+                        const offer = product.productOffer ?? 0;
+                        const status = product.status || 'Unavailable';
+                        const images = JSON.stringify(product.productImage || []);
+                    %>
+                    <tr>
+                        <td><%= (currentPage - 1) * limit + index + 1 %></td>
+                        <td>
+                            <% if (product.productImage && product.productImage.length > 0) { %>
+                                <img src="<%= product.productImage[0] %>" alt="Product Image" width="50">
+                            <% } else { %>
+                                No Image
+                            <% } %>
+                        </td>
+                        <td><%= productName %></td>
+                        <td><%= categoryName %></td>
+                        <td><%= regularPrice.toFixed(2) %></td>
+                        <td><%= salePrice.toFixed(2) %></td>
+                        <td><%= quantity %></td>
+                        <td><%= offer %>%</td>
+                        <td><%= status %></td>
+                        <td>
+                            <div class="action-btn-group">
+                                <button class="action-btn block-btn" onclick="toggleProductBlock('<%= product._id %>', this)">
+                                    <%= product.isBlocked ? "Unblock" : "Block" %>
+                                </button>
+                    
+                                <button class="action-btn edit-btn" onclick="window.location.href='/admin/products/edit/<%= product._id %>'">Edit</button>
+                    
+                                <button class="action-btn delete-btn" onclick="deleteProduct('<%= product._id %>')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+                    
+                </tbody>
+            </table>
+            
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="/admin/products?page=<%= currentPage - 1 %>">Prev</a>
+                <% } %>
+                
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/admin/products?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                        <%= i %>
+                    </a>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                    <a href="/admin/products?page=<%= currentPage + 1 %>">Next</a>
+                <% } %>
+            </div>
+            
+
+    <script >
+        
+
+        function setActiveMenuItem() {
+            const currentPath = window.location.pathname.toLowerCase();
+            const menuButtons = document.querySelectorAll('.sidebar .nav-button');
+    
+            menuButtons.forEach(button => {
+                button.classList.remove('active');
+    
+                const buttonText = button.textContent.trim().toLowerCase();
+    
+                if (currentPath.includes(buttonText)) {
+                    button.classList.add('active');
+                }
+    
+                button.addEventListener('click', () => {
+                    const routes = {
+                        "dashboard": "/admin/dashboard",
+                        "product": "/admin/products",
+                        "users": "/admin/users",
+                        "brands": "/admin/brands",
+                        "category": "/admin/category",
+                        "orders": "/admin/orders",
+                        "coupons": "/admin/coupons",
+                        "wallet": "/admin/wallet",
+                     
+                    };
+        
+                    const route = routes[buttonText];
+                    if (route) {
+                        window.location.href = route;
+                    }
+                });
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            setActiveMenuItem();
+
+        });
+        function deleteProduct(productId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/admin/products/delete/${productId}`, { method: 'DELETE' })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("Deleted!", "Product has been deleted.", "success")
+                                    .then(() => window.location.reload());
+                            } else {
+                                Swal.fire("Error", data.message, "error");
+                            }
+                        })
+                        .catch(err => console.error("Error deleting category:", err));
+                }
+            });
+        }
+     
+        document.getElementById("addProductBtn").addEventListener('click',(e)=>{
+        e.preventDefault()
+        
+        window.location.href = "/admin/products/addProducts"
+        })
+
+        function toggleProductBlock(productId, button) {
+    const action = button.textContent.trim() === "Block" ? "block" : "unblock";
+
+    Swal.fire({
+        title: `Are you sure you want to ${action} this product?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: `Yes, ${action} it!`
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/products/block-unblock/${productId}`, { method: 'PATCH' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire(`${action === "block" ? "Blocked" : "Unblocked"}!`, `Product has been ${action}ed.`, "success")
+                            .then(() => {
+                              
+                                button.textContent = action === "block" ? "Unblock" : "Block";
+                            });
+                    } else {
+                        Swal.fire("Error", data.message, "error");
+                    }
+                })
+                .catch(err => console.error(`Error ${action}ing product:`, err));
+        }
+    });
+}
+
+    </script>
+</body>
+</html>

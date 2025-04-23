@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swizz Times - Add Category</title>
+    <link rel="stylesheet" href="/css/admin/adminCategory.css">
+    <link rel="stylesheet" href="/css/admin/adminAddCategory.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <%- include('../partials/admin/admin_sidebar') %>
+        <div class="main-content">
+            <div class="header">
+                <h1>Add New Category</h1>
+                <button class="logout-button" onclick="window.location.href='/admin/logout'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+            
+            <div class="form-container">
+                <form  enctype="multipart/form-data" acti>
+                    <div class="form-group">
+                        <label for="categoryName">Category Name*</label>
+                        <input type="text" id="categoryName" name="name"  placeholder="Enter category name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoryDescription">Description*</label>
+                        <textarea id="categoryDescription" name="description"  placeholder="Enter category description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryOffer">Offer*</label>
+                        <input id="categoryOffer" type="number" name="categoryOffer" placeholder="Enter category offer" min="0" max="100" />
+                    </div>
+                    
+
+                    
+                    <div class="button-group">
+                        <button type="button" class="back-button" onclick="window.location.href='/admin/category'">
+                            Cancel
+                        </button>
+                        <button  class="submit-button" id="saveButton">
+                            Save Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+   
+        // Function to set active menu item
+        function setActiveMenuItem() {
+            const menuButtons = document.querySelectorAll('.sidebar .nav-button');
+            
+            menuButtons.forEach(button => {
+                button.classList.remove('active');
+                
+                const buttonText = button.textContent.trim().toLowerCase();
+                
+                // Define routes mapping
+                const routes = {
+                    "dashboard": "/admin/dashboard",
+                    "products": "/admin/products",
+                    "users": "/admin/users",
+                    "brands": "/admin/brands",
+                    "category": "/admin/category",
+                    "orders": "/admin/orders",
+                    "coupons": "/admin/coupons",
+                    "wallet": "/admin/wallet",
+                    
+                };
+                
+                // Set Category as active since we're on the add category page
+                if (buttonText === "category") {
+                    button.classList.add('active');
+                }
+                
+                // Add click event listeners to buttons
+                button.addEventListener('click', () => {
+                    const route = routes[buttonText];
+                    if (route) {
+                        window.location.href = route;
+                    }
+                });
+            });
+        }
+  
+        // Call setActiveMenuItem when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', setActiveMenuItem);
+
+        document.getElementById('saveButton').addEventListener('click',(event)=>{
+            event.preventDefault();
+
+            const categoryName = document.getElementById('categoryName').value
+            const categoryDescription = document.getElementById('categoryDescription').value
+            const categoryOffer = document.getElementById('categoryOffer').value
+            if(!categoryName || !categoryDescription ){
+                
+               return Swal.fire({
+                
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: "Every fields are required",
+                            background: '#1a1a1a',
+                            color: '#ffffff',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Got it',
+                            customClass: {
+                                popup: 'colored-toast',
+                                title: 'swal2-title-dark',
+                                content: 'swal2-content-dark'
+                            }
+                        });
+
+            }
+            fetch('/admin/category/add-category',{
+                method : 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body : JSON.stringify({categoryName,categoryDescription,categoryOffer})
+            }).then(res=>res.json())
+            .then(data=>{
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: "Category created successfully",
+                        background: '#1a1a1a',
+                        color: '#ffffff',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Got it',
+                        customClass: {
+                            popup: 'colored-toast',
+                            title: 'swal2-title-dark',
+                            content: 'swal2-content-dark'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/admin/category"; 
+                        }
+                    });
+                }else{
+                    Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: data.message,
+                            background: '#1a1a1a',
+                            color: '#ffffff',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Got it',
+                            customClass: {
+                                popup: 'colored-toast',
+                                title: 'swal2-title-dark',
+                                content: 'swal2-content-dark'
+                            }
+                        });
+                }
+            })
+            .catch(err=>console.error("Error :",err ))
+        })
+
+
+
+
+    </script>
+</body>
+</html>

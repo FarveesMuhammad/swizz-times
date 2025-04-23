@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swizz Times - Add Product</title>
+    <link rel="stylesheet" href="/css/admin/adminCategory.css">
+    <link rel="stylesheet" href="/css/admin/adminAddCategory.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <%- include('../partials/admin/admin_sidebar') %>
+        <div class="main-content">
+            <div class="header">
+                <h1>Add New Product</h1>
+                <button class="logout-button" onclick="window.location.href='/admin/logout'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+            
+            <div class="form-container">
+                <form enctype="multipart/form-data" id="addProductForm">
+                    <div class="form-group">
+                        <label for="productName">Product Name*</label>
+                        <input value="watch" type="text" id="productName" name="productName" placeholder="Enter product name">
+                        <div id="productNameError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productDescription">Description*</label>
+                        <textarea value="watchwatchwatchwatch" id="productDescription" name="description" placeholder="Enter product description">asasas</textarea>
+                        <div id="productDescriptionError" class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category*</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select a category</option>
+                            <% category.forEach(cat => { %>
+                                <option value="<%= cat._id %>"><%= cat.name %></option>
+                            <% }) %>
+                        </select>
+                        <div id="categoryError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="brand">Brand*</label>
+                        <select id="brand" name="brand" required>
+                            <option value="">Select a brand</option>
+                            <% brand.forEach(cat => { %>
+                                <option value="<%= cat._id %>"><%= cat.brandName %></option>
+                            <% }) %>
+                        </select>
+                        <div id="brandError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regularPrice">Regular Price*</label>
+                        <input value="2323322" type="number" id="regularPrice" name="regularPrice" placeholder="Enter regular price" min="0" step="0.01">
+                        <div id="regularPriceError" class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salePrice">Sale Price*</label>
+                        <input value="2323" type="number" id="salePrice" name="salePrice" placeholder="Enter sale price" min="0" step="0.01">
+                        <div id="salePriceError" class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Quantity*</label>
+                        <input value="23" type="number" id="quantity" name="quantity" placeholder="Enter product quantity" min="0">
+                        <div id="quantityError" class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productOffer">Product Offer (%)</label>
+                        <input  type="number" id="offer" name="productOffer" placeholder="Enter product offer" min="0" max="100" value="23">
+                        <div id="offerError" class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Status*</label>
+                        <select id="status" name="status">
+                            <option value="Available">Available</option>
+                            <option value="out of stock">Out of Stock</option>
+                        </select>
+                        <div id="statusError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="case_material">Case Material*</label>
+                        <select id="case_material" name="case_material" required>
+                            <option value="Stainless Steel">Stainless Steel</option>
+                            <option value="Titanium">Titanium</option>
+                            <option value="Ceramic">Ceramic</option>
+                            <option value="Gold">Gold</option>
+                            <option value="Carbon Fiber">Carbon Fiber</option>
+                            <option value="Bronze">Bronze</option>
+                        </select>
+                        <div id="caseMaterialError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="band_material">Band Material*</label>
+                        <select id="band_material" name="band_material" required>
+                            <option value="Leather">Leather</option>
+                            <option value="Stainless Steel">Stainless Steel</option>
+                            <option value="Rubber">Rubber</option>
+                            <option value="Nylon">Nylon</option>
+                            <option value="Silicone">Silicone</option>
+                            <option value="Titanium">Titanium</option>
+                        </select>
+                        <div id="bandMaterialError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="clasp_type">Clasp Type*</label>
+                        <select id="clasp_type" name="clasp_type" required>
+                            <option value="Buckle">Buckle</option>
+                            <option value="Fold-Over Clasp">Fold-Over Clasp</option>
+                            <option value="Push-Button Clasp">Push-Button Clasp</option>
+                            <option value="Deployment Clasp">Deployment Clasp</option>
+                            <option value="Velcro">Velcro</option>
+                        </select>
+                        <div id="claspTypeError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="country">Country of Origin*</label>
+                        <input type="text" id="country" name="country" required>
+                        <div id="countryError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="water_resistance">Water Resistance*</label>
+                        <select id="water_resistance" name="water_resistance" required>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                        <div id="waterResistanceError" class="error-message"></div>
+                    </div>
+                    
+
+                    <div class="form-group">
+                      <label>Product Images* (4 images required)</label>
+                      
+                      <!-- Image 1 -->
+                      <div class="image-field-container">
+                          <h4>Image 1 (Main Product Image)</h4>
+                          <div class="image-upload-area">
+                              <input type="file" id="productImage1" name="productImage1" accept="image/*" class="product-image-input">
+                              <label for="productImage1" class="upload-label">Select Image</label>
+                              <div class="image-preview-area" id="previewArea1">
+                                  <p class="no-image-text">No image selected</p>
+                              </div>
+                          </div>
+                          <div class="image-controls">
+                              <button type="button" class="crop-button" id="cropButton1" disabled>Crop Image</button>
+                              <button type="button" class="remove-button" id="removeButton1" disabled>Remove</button>
+                          </div>
+                      </div>
+                      
+                      <!-- Image 2 -->
+                      <div class="image-field-container">
+                          <h4>Image 2</h4>
+                          <div class="image-upload-area">
+                              <input type="file" id="productImage2" name="productImage2" accept="image/*" class="product-image-input">
+                              <label for="productImage2" class="upload-label">Select Image</label>
+                              <div class="image-preview-area" id="previewArea2">
+                                  <p class="no-image-text">No image selected</p>
+                              </div>
+                          </div>
+                          <div class="image-controls">
+                              <button type="button" class="crop-button" id="cropButton2" disabled>Crop Image</button>
+                              <button type="button" class="remove-button" id="removeButton2" disabled>Remove</button>
+                          </div>
+                      </div>
+                      
+                      <!-- Image 3 -->
+                      <div class="image-field-container">
+                          <h4>Image 3</h4>
+                          <div class="image-upload-area">
+                              <input type="file" id="productImage3" name="productImage3" accept="image/*" class="product-image-input">
+                              <label for="productImage3" class="upload-label">Select Image</label>
+                              <div class="image-preview-area" id="previewArea3">
+                                  <p class="no-image-text">No image selected</p>
+                              </div>
+                          </div>
+                          <div class="image-controls">
+                              <button type="button" class="crop-button" id="cropButton3" disabled>Crop Image</button>
+                              <button type="button" class="remove-button" id="removeButton3" disabled>Remove</button>
+                          </div>
+                      </div>
+                      
+                      <!-- Image 4 -->
+                      <div class="image-field-container">
+                          <h4>Image 4</h4>
+                          <div class="image-upload-area">
+                              <input type="file" id="productImage4" name="productImage4" accept="image/*" class="product-image-input">
+                              <label for="productImage4" class="upload-label">Select Image</label>
+                              <div class="image-preview-area" id="previewArea4">
+                                  <p class="no-image-text">No image selected</p>
+                              </div>
+                          </div>
+                          <div class="image-controls">
+                              <button type="button" class="crop-button" id="cropButton4" disabled>Crop Image</button>
+                              <button type="button" class="remove-button" id="removeButton4" disabled>Remove</button>
+                          </div>
+                      </div>
+                      
+                      <div class="image-validation-message" id="imageValidationMessage">
+                          All 4 product images are required
+                      </div>
+                  </div>
+                  
+                  <!-- Crop Modal -->
+                  <div id="cropModal" class="crop-modal">
+                      <div class="crop-modal-content">
+                          <div class="crop-modal-header">
+                              <h3>Crop Image</h3>
+                              <span class="crop-modal-close">&times;</span>
+                          </div>
+                          <div class="crop-modal-body">
+                              <div class="crop-container">
+                                  <img id="cropImage" src="" alt="Image to crop">
+                              </div>
+                          </div>
+                          <div class="crop-modal-footer">
+                              <button type="button" id="applyCrop" class="crop-apply-button">Apply Crop</button>
+                              <button id="cancelCrop" class="crop-cancel-button">Cancel</button>
+                          </div>
+                      </div>
+                  </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="back-button" onclick="window.location.href='/admin/products'">
+                            Cancel
+                        </button>
+                        <button type="button" class="submit-button" id="saveButton">
+                            Save Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set active menu item
+    setActiveMenuItem();
+    
+  
+    // Initialize image handling
+    initImageHandling();
+    
+    // Form submission
+    initFormSubmission();
+});
+
+// Image handling variables
+let cropper = null;
+let currentImageInput = null;
+let croppedImages = {
+    productImage1: null,
+    productImage2: null,
+    productImage3: null,
+    productImage4: null
+};
+
+function initImageHandling() {
+    // For each image input
+    for (let i = 1; i <= 4; i++) {
+        const imageInput = document.getElementById(`productImage${i}`);
+        const previewArea = document.getElementById(`previewArea${i}`);
+        const cropButton = document.getElementById(`cropButton${i}`);
+        const removeButton = document.getElementById(`removeButton${i}`);
+        
+        // Image selection handler
+        imageInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Validate file type
+                const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validImageTypes.includes(file.type)) {
+                    Swal.fire({
+                        title: 'Invalid image type',
+                        text: 'Please select a valid image file (JPEG, PNG, GIF, WEBP)',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
+                    this.value = '';
+                    return;
+                }
+                
+                // Display preview
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewArea.innerHTML = `<img src="${event.target.result}" class="preview-image" alt="Preview">`;
+                    cropButton.disabled = false;
+                    removeButton.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Crop button handler
+        cropButton.addEventListener('click', function() {
+            const previewImage = previewArea.querySelector('img');
+            if (previewImage) {
+                openCropModal(previewImage.src, `productImage${i}`);
+            }
+        });
+        
+        // Remove button handler
+        removeButton.addEventListener('click', function() {
+            previewArea.innerHTML = '<p class="no-image-text">No image selected</p>';
+            imageInput.value = '';
+            cropButton.disabled = true;
+            removeButton.disabled = true;
+            croppedImages[`productImage${i}`] = null;
+        });
+    }
+    
+    // Crop modal handlers
+    document.querySelector('.crop-modal-close').addEventListener('click', closeCropModal);
+    document.getElementById('cancelCrop').addEventListener('click', closeCropModal);
+    document.getElementById('applyCrop').addEventListener('click', applyCrop);
+}
+
+function openCropModal(imageSrc, inputId) {
+    const cropModal = document.getElementById('cropModal');
+    const cropImage = document.getElementById('cropImage');
+    
+    // Set the current image input
+    currentImageInput = inputId;
+    
+    // Set image in the crop modal
+    cropImage.src = imageSrc;
+    
+    // Show modal
+    cropModal.style.display = 'flex';
+    
+    // Initialize cropper after a short delay to ensure the image is loaded
+    setTimeout(() => {
+        if (cropper) {
+            cropper.destroy();
+        }
+        
+        cropper = new Cropper(cropImage, {
+            aspectRatio: 1, // 1:1 square crop
+            viewMode: 1,
+            responsive: true,
+            restore: false,
+            autoCropArea: 0.8,
+            movable: false,
+            zoomable: true,
+            rotatable: true,
+            scalable: false
+        });
+    }, 100);
+}
+
+function closeCropModal() {
+    const cropModal = document.getElementById('cropModal');
+    
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+    
+    cropModal.style.display = 'none';
+}
+
+function applyCrop() {
+    if (!cropper || !currentImageInput) return;
+    
+    const index = currentImageInput.slice(-1);
+    
+    const canvas = cropper.getCroppedCanvas({
+        width: 500,  
+        height: 500,  
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'high'
+    });
+    
+    if (!canvas) {
+        closeCropModal();
+        return;
+    }
+    
+  
+    const croppedImageUrl = canvas.toDataURL('image/jpeg', 0.9);
+    
+ 
+    const previewArea = document.getElementById(`previewArea${index}`);
+    previewArea.innerHTML = `<img src="${croppedImageUrl}" class="preview-image" alt="Preview">`;
+    
+    
+    canvas.toBlob(function(blob) {
+        croppedImages[currentImageInput] = blob;
+    }, 'image/jpeg', 0.9);
+    
+    closeCropModal();
+}
+
+
+// Form submission
+function initFormSubmission() {
+    document.getElementById('saveButton').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        if (validateForm()) {
+       
+            submitForm();
+        }else {
+            console.error(" Validation failed. Form not submitted.");
+        }
+    });
+}
+
+function validateForm() {
+    // Clear all previous error messages
+    document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+    document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+    
+    const fields = [
+    { id: 'productName', errorId: 'productNameError', message: 'Product name is required' },
+    { id: 'productDescription', errorId: 'productDescriptionError', message: 'Product description is required' },
+    { id: 'category', errorId: 'categoryError', message: 'Please select a category' },
+    { id: 'brand', errorId: 'brandError', message: 'Brand name is required' },
+    { id: 'regularPrice', errorId: 'regularPriceError', message: 'Regular price is required' },
+    { id: 'salePrice', errorId: 'salePriceError', message: 'Sale price is required' },
+    { id: 'quantity', errorId: 'quantityError', message: 'Quantity is required' },
+    { id: 'offer', errorId: 'offerError', message: 'Offer percentage is required' },
+    { id: 'status', errorId: 'statusError', message: 'Please select a status' },
+    { id: 'case_material', errorId: 'caseMaterialError', message: 'Please select a case material' },
+    { id: 'band_material', errorId: 'bandMaterialError', message: 'Please select a band material' },
+    { id: 'clasp_type', errorId: 'claspTypeError', message: 'Please select a clasp type' },
+    { id: 'country', errorId: 'countryError', message: 'Country of origin is required' },
+    { id: 'water_resistance', errorId: 'waterResistanceError', message: 'Please select water resistance' }
+];
+
+    
+    let isValid = true;
+    
+    fields.forEach(field => {
+        const input = document.getElementById(field.id);
+        const errorElement = document.getElementById(field.errorId);
+        
+        if (!input.value.trim()) {
+            errorElement.textContent = field.message;
+            input.classList.add('input-error');
+            isValid = false;
+        }
+    });
+    
+  
+    const salePrice = parseFloat(document.getElementById('salePrice').value);
+    const regularPrice = parseFloat(document.getElementById('regularPrice').value);
+    
+    if (salePrice > regularPrice) {
+        Swal.fire({
+            title: 'Sale price cannot be greater than the regular price!',
+            icon: 'error',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Ok'
+        });
+        isValid = false;
+    }
+    
+    
+    let imagesSelected = true;
+    for (let i = 1; i <= 4; i++) {
+        const imageInput = document.getElementById(`productImage${i}`);
+        const hasOriginalImage = imageInput.files.length > 0;
+        const hasCroppedImage = croppedImages[`productImage${i}`] !== null;
+        
+        if (!hasOriginalImage && !hasCroppedImage) {
+            imagesSelected = false;
+            break;
+        }
+    }
+    
+    if (!imagesSelected) {
+        document.getElementById('imageValidationMessage').textContent = 'All 4 product images are required';
+        isValid = false;
+    } else {
+        document.getElementById('imageValidationMessage').textContent = '';
+    }
+    
+    return isValid;
+}
+
+
+const cloudinaryUploadUrl = 'https://api.cloudinary.com/v1_1/dq1tnbaxt/image/upload'; // Replace with your Cloudinary URL
+
+
+const uploadImageToCloudinary = async (file, index) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset','ecommerce-uploads'); 
+    formData.append('public_id', `product_image_${Date.now()}`); 
+    formData.append('folder','products',);
+    
+    try {
+        const response = await fetch(cloudinaryUploadUrl, {
+            method: 'POST',
+            body: formData,
+        });
+        const result = await response.json();
+        if (result.secure_url) {
+            return result.secure_url; 
+        } else {
+            throw new Error('Image upload failed');
+        }
+    } catch (error) {
+        console.error(` Image Upload Error (Image ${index}):`, error);
+        return null; // If upload fails, return null
+    }
+};
+
+
+const handleImageUploads = async () => {
+    Swal.fire({
+            title: 'Uploading...',
+            text: 'Please wait',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    const imageUrls = [];
+    
+    for (let i = 1; i <= 4; i++) {
+        const inputName = `productImage${i}`;
+        let imageUrl = null;
+
+        if (croppedImages[inputName]) {
+            
+            imageUrl = await uploadImageToCloudinary(croppedImages[inputName], i);
+        } else {
+            
+            const fileInput = document.getElementById(inputName);
+            if (fileInput.files.length > 0) {
+                imageUrl = await uploadImageToCloudinary(fileInput.files[0], i);
+            }
+        }
+
+        if (imageUrl) {
+            imageUrls.push(imageUrl);
+        }
+    }
+
+    return imageUrls; 
+};
+
+
+const submitForm = async () => {
+    try {
+        console.log(" Uploading images...");
+        const imageUrls = await handleImageUploads();
+
+        if (imageUrls.length < 4) {
+            throw new Error(" All 4 product images are required.");
+        }
+
+   
+        const productData = {
+            productName: document.getElementById('productName').value.trim(),
+            description: document.getElementById('productDescription').value.trim(),
+            category: document.getElementById('category').value,
+            brand: document.getElementById('brand').value,
+            regularPrice: document.getElementById('regularPrice').value,
+            salePrice: document.getElementById('salePrice').value,
+            quantity: document.getElementById('quantity').value,
+            productOffer: document.getElementById('offer').value,
+            status: document.getElementById('status').value,
+            images: imageUrls, 
+            caseMaterial: document.getElementById('case_material').value,
+            bandMaterial: document.getElementById('band_material').value,
+            claspType: document.getElementById('clasp_type').value,
+            country: document.getElementById('country').value.trim(),
+            waterResistance: document.getElementById('water_resistance').value === "true"
+        };
+
+        console.log(" Sending Product Data:", productData);
+
+
+        const response = await fetch('/admin/products/addProducts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(productData),
+            
+        });
+
+        const result = await response.json();
+        console.log(" Server Response:", result);
+
+        if (result.success) {
+            Swal.fire({
+                title: 'Success!',
+                text: 'Product added successfully',
+                icon: 'success',
+                confirmButtonColor: '#3085d6'
+            }).then(() => {
+                window.location.href = '/admin/products';
+            });
+        } else {
+            throw new Error(result.message || 'Unknown error occurred');
+        }
+    } catch (error) {
+        console.error(' Error adding product:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: error.message || 'Failed to add product. Please try again.',
+            icon: 'error',
+            confirmButtonColor: '#d33'
+        });
+    }
+};
+
+function setActiveMenuItem() {
+            const menuButtons = document.querySelectorAll('.sidebar .nav-button');
+            
+            menuButtons.forEach(button => {
+                button.classList.remove('active');
+                
+                const buttonText = button.textContent.trim().toLowerCase();
+                
+                // Define routes mapping
+                const routes = {
+                    "dashboard": "/admin/dashboard",
+                    "products": "/admin/products",
+                    "users": "/admin/users",
+                    "brands": "/admin/brands",
+                    "category": "/admin/category",
+                    "orders": "/admin/orders",
+                    "coupons": "/admin/coupons",
+                    "wallet": "/admin/wallet",
+                  
+                };
+                
+               
+                if (buttonText === "products") {
+                    button.classList.add('active');
+                }
+                
+                // Add click event listeners to buttons
+                button.addEventListener('click', () => {
+                    const route = routes[buttonText];
+                    if (route) {
+                        window.location.href = route;
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="css/user/otpVerification.css">
+</head>
+<body>
+    <!-- Enhanced Toast Container -->
+    <div class="toast-container">
+        <div class="custom-toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <strong class="me-auto text-white">Success</strong>
+                <button type="button" class="toast-close" data-bs-dismiss="toast" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="progress-bar-container">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+            <div class="toast-body">
+            Check your email for the otp
+            </div>
+        </div>
+    </div>
+
+    <div class="otp-box">
+        <h2 class="mb-4">OTP Verification</h2>
+        <div>
+             <%= text %>
+        </div>
+        <div class="d-flex justify-content-center gap-3 mb-3">
+            <input type="text" maxlength="1" class="otp-input">
+            <input type="text" maxlength="1" class="otp-input">
+            <input type="text" maxlength="1" class="otp-input">
+            <input type="text" maxlength="1" class="otp-input">
+        </div>
+
+        <div class="d-flex justify-content-between mb-4">
+            <a href="#" class="resend-btn disabled" id="resendOtpBtn">Resend</a>
+            <span id="otpTimer">80 sec</span>
+        </div>
+        
+
+        <button class="verify-btn">Verify</button>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    //    ======================================show toast===================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const toastElement = document.querySelector('.custom-toast');
+            
+         
+            setTimeout(() => {
+                toastElement.remove();
+            }, 3000);
+
+
+            const closeButton = toastElement.querySelector('.toast-close');
+            closeButton.addEventListener('click', () => {
+                toastElement.style.animation = 'fadeOut 0.7s forwards';
+                setTimeout(() => {
+                    toastElement.remove();
+                }, 1000);
+            });
+        });
+
+
+    //    ====================================== otp to backend   ===================================================
+
+
+        document.querySelector('.verify-btn').addEventListener('click', () => {
+            const inputs = document.querySelectorAll('.otp-input');
+            let otp = '';
+            inputs.forEach(input => {
+                otp += input.value;
+            });
+            fetch('/verify-otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({otp})
+            }).then(res=>res.json())
+            .then(data=>{
+                if(data.forgotPassword){
+                    window.location.href = "/changePassword"
+
+                }
+                else if(data.success){
+                    window.location.href = "/swizz-times"
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                title: 'Oops...',
+                text: data.message
+                    })
+                }
+            })
+            .catch(err=>console.error(err))
+        });
+
+// =================================otp inputs focus&backspace====================================
+        const inputs = document.querySelectorAll('.otp-input');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', function() {
+                if (this.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        let timeLeft = 80; 
+    const timerElement = document.getElementById("otpTimer");
+    const resendButton = document.getElementById("resendOtpBtn");
+
+    // Function to start the countdown
+    function startTimer() {
+        resendButton.classList.add("disabled"); 
+        resendButton.style.pointerEvents = "none"; 
+
+        let countdown = setInterval(() => {
+            timerElement.textContent = `${timeLeft} sec`;
+            timeLeft--;
+
+            if (timeLeft < 0) {
+                clearInterval(countdown); 
+                timerElement.textContent = ""; 
+                resendButton.classList.remove("disabled"); 
+                resendButton.style.pointerEvents = "auto"; 
+            }
+        }, 1000);
+    }
+
+    // Start the timer when page loads
+    document.addEventListener("DOMContentLoaded", startTimer);
+
+
+    resendButton.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        if (resendButton.classList.contains("disabled")) return; 
+
+        try {
+            const response = await fetch("/resend-otp", { method: "POST" });
+            const data = await response.json();
+
+            if (data.success) {
+                Swal.fire("OTP Sent!", "Check your email for the new OTP.", "success");
+                timeLeft = 80; 
+                startTimer(); 
+            } else {
+                Swal.fire("Error", data.message, "error");
+            }
+        } catch (error) {
+            console.error("Error resending OTP:", error);
+            Swal.fire("Error", "Something went wrong. Try again later.", "error");
+        }
+    });
+    </script>
+</body>
+</html>

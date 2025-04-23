@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWIZZ TIMES - WALLET MANAGEMENT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin/admin_products.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .brand-header {
+            background-color: rgba(173, 216, 230, 0.3);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        .table-container {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .status-credit {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .status-debit {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .wallet-actions button {
+            background: none;
+            border: none;
+            color: #0d6efd;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <%- include("../partials/admin/admin_sidebar") %>
+        <div class="main-content">
+            <div class="header">
+                <h1>Wallet Management</h1>
+                <button class="logout-button" onclick="window.location.href='/admin/logout'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Transaction Date</th>
+                                <th>User</th>
+                                <th>Transaction Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (transactions.length > 0) { %>
+                                <% transactions.forEach(transaction => { %>
+                                    <tr>
+                                        <td>#<%= transaction.transactionId %></td>
+                                        <td>
+                                            <%= new Date(transaction.createdAt).toLocaleDateString() %>
+                                            <div class="small text-muted">
+                                                <%= new Date(transaction.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <%= transaction.user.name %>
+                                            <div class="small text-muted"><%= transaction.user.username %></div>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge <%= transaction.type === 'Credit' ? 'status-credit' : 'status-debit' %>">
+                                                <%= transaction.type %>
+                                            </span>
+                                        </td>
+                                        <td>₹<%= transaction.amount.toFixed(2) %></td>
+                                        <td><%= transaction.status %></td>
+                                        <td class="wallet-actions">
+                                            <button onclick="window.location.href='/admin/transaction-details/<%= transaction.transactionId %>'">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No transactions found</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pagination-container mt-3">
+        <ul class="pagination">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                </li>
+            <% } %>
+    
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                </li>
+            <% } %>
+    
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.3/sweetalert2.all.min.js"></script>
+    <script>
+        
+        function setActiveMenuItem() {
+            const currentPath = window.location.pathname.toLowerCase();
+            const menuButtons = document.querySelectorAll('.sidebar .nav-button');
+    
+            menuButtons.forEach(button => {
+                button.classList.remove('active');
+    
+                const buttonText = button.textContent.trim().toLowerCase();
+    
+                if (currentPath.includes(buttonText)) {
+                    button.classList.add('active');
+                }
+    
+                button.addEventListener('click',()=>{
+                    const routes = {
+                    "dashboard": "/admin/dashboard",
+                    "product": "/admin/products",
+                    "users": "/admin/users",
+                    "brands": "/admin/brands",
+                    "category": "/admin/category",
+                    "orders": "/admin/orders",
+                    "coupons": "/admin/coupons",
+                    "wallet": "/admin/wallet",
+                   
+                };
+    
+                const route = routes[buttonText];
+                if (route) {
+                    window.location.href = route;
+                }
+                })
+            });
+        }
+    
+        document.addEventListener('DOMContentLoaded', setActiveMenuItem);
+    </script>
+</body>
+</html>

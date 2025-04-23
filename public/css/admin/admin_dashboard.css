@@ -1,0 +1,245 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #ffffff;
+    color: #333333;
+}
+
+/* Container and layout */
+.container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+/* Sidebar styles */
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    padding: 10px;
+    text-align: center;
+}
+
+.nav-button {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 5px 0;
+    text-align: left;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #e0e0e0;
+}
+
+.nav-button.active {
+    background-color: #000000;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Main content area */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 20px 30px;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 10px 0;
+}
+
+.header h1 {
+    font-size: 24px;
+    margin: 0;
+    color: #333333;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #ddd;
+    border-radius: 50%;
+}
+
+/* Common table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+/* Dashboard-specific styles */
+.sales-chart {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-details {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-table th {
+    font-weight: 600;
+    color: #666;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.status.delivered {
+    background-color: #e6f4ea;
+    color: #137333;
+}
+
+.status.pending {
+    background-color: #fef7e0;
+    color: #b45309;
+}
+
+.dropdown {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-right: 10px;
+}
+
+.print-btn {
+    padding: 8px 16px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.print-btn:hover {
+    background-color: #357abd;
+}
+
+/* Products page specific styles */
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 300px;
+}
+
+.add-button {
+    padding: 8px 20px;
+    background-color: #ffffff;
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.product-table th {
+    background-color: #1e90ff;
+    color: white;
+    font-weight: normal;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    background-color: #f5f5f5;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 18px;
+}
+
+.go-back {
+    color: #666;
+    text-decoration: none;
+    margin-top: 20px;
+    display: inline-block;
+}.logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logout-button:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logout-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logout-button svg {
+    width: 16px;
+    height: 16px;
+}

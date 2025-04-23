@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Your Store Name</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="author" content="TemplatesJungle">
+    <meta name="keywords" content="ecommerce,fashion,store">
+    <meta name="description" content="Bootstrap 5 Fashion Store HTML CSS Template">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/vendor.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap"
+      rel="stylesheet">
+      <link rel="stylesheet" href="/css/user/shop.css">
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+       
+       #clickSwitch{
+        cursor: pointer;
+     }
+       
+    </style>
+</head>
+<body>
+
+  <%- include('../partials/user/navbar') %>
+    <main>
+        <div class="filters">
+          <div class="search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search products..." value="<%= search %>">
+            <button id="searchBtn">Search</button>
+            <button id="clearSearch">✖</button>
+        </div>
+        
+        
+      <div class="categories">
+  <button 
+    class="<%= (!selectedCategory || selectedCategory === 'all') ? 'active' : '' %>" 
+    data-category="all">
+    All
+  </button>
+
+  <% categories.forEach(category => { %>
+    <button 
+      data-category="<%= category._id %>" 
+      class="<%= selectedCategory == category._id ? 'active' : '' %>">
+      <%= category.name %>
+    </button>
+  <% }); %>
+</div>
+
+            
+            
+      <div class="sort">
+        <span>Sort by:</span>
+        <select id="sortSelect">
+            <option value="newest" <%= sort === "newest" ? "selected" : "" %>>Newest</option>
+            <option value="priceLowHigh" <%= sort === "priceLowHigh" ? "selected" : "" %>>Price: Low to High</option>
+            <option value="priceHighLow" <%= sort === "priceHighLow" ? "selected" : "" %>>Price: High to Low</option>
+            <option value="nameAZ" <%= sort === "nameAZ" ? "selected" : "" %>>Name: A to Z</option>
+            <option value="nameZA" <%= sort === "nameZA" ? "selected" : "" %>>Name: Z to A</option>
+        </select>
+    </div>
+        </div>
+        <div class="container py-2">
+          <div class="row">
+            <% products.forEach(function(product, index) {
+            
+              let productId = product._id || '';
+              let productName = product.productName || 'Unnamed Product';
+              let brandName = product.brand && product.brand.brandName ? product.brand.brandName : 'Brand Not Available';
+              let categoryName = product.category && product.category.name ? product.category.name : 'Category Not Available';
+              let productImage = (product.productImage && product.productImage[0]) ? product.productImage[0] : '/images/no-image.png';
+              let quantity = product.quantity != null ? product.quantity : 'N/A';
+              let offer = product.productOffer && product.productOffer > 0 ? product.productOffer : 0;
+              let regularPrice = product.regularPrice != null ? product.regularPrice.toFixed(2) : '0.00';
+              let salePrice = product.salePrice != null ? product.salePrice.toFixed(2) : regularPrice;
+              let status = product.status || 'Unavailable';
+              let isAvailable = status === 'Available';
+            %>
+        
+              <div class="col-md-4 mb-4">
+                <div class="card product-card">
+        
+                  <% if (offer > 0) { %>
+                    <div class="product-offer-badge"><%= offer %>% OFF</div>
+                  <% } %>
+        
+                  <button onclick="addToWishlist('<%= productId %>', this)" class="product-wishlist-btn">
+                    <!-- Heart SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                      class="bi bi-heart" viewBox="0 0 16 16">
+                      <path
+                        d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+                    </svg>
+                  </button>
+        
+                  <div class="product-image" onclick="window.location.href='/swizz-times/shop/product/<%= productId %>'">
+                    <img src="<%= productImage %>" alt="<%= productName %>" class="card-img-top">
+                  </div>
+        
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted"><%= categoryName %></span>
+                      <span class="text-muted">(<%= quantity %> in stock)</span>
+                    </div>
+        
+                    <h5 class="card-title mb-1"><%= productName %></h5>
+                    <p class="text-muted mb-2"><%= brandName %></p>
+        
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="product-price">
+                        <% if (offer > 0) { %>
+                          <span class="text-dark fw-bold">₹<%= salePrice %></span>
+                          <span class="original-price">₹<%= regularPrice %></span>
+                        <% } else { %>
+                          <span class="text-dark fw-bold">₹<%= regularPrice %></span>
+                        <% } %>
+                      </div>
+        
+                      <button onclick="window.location.href='/swizz-times/shop/product/<%= productId %>'"
+                        class="btn btn-dark add-to-cart-btn"
+                        data-product-id="<%= productId %>"
+                        <%= isAvailable ? '' : 'disabled' %>>
+                        <%= isAvailable ? 'Add to Cart' : 'Out of Stock' %>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        
+            <% }); %>
+          </div>
+        </div>
+        
+    
+        <div class="pagination">
+          <% if (currentPage > 1) { %>
+              <a href="?page=<%= currentPage - 1 %>&sort=<%= sort %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">Prev</a>
+          <% } %>
+      
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="?page=<%= i %>&sort=<%= sort %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= selectedCategory ? '&category=' + selectedCategory : '' %>">                  <%= i %>
+              </a>
+          <% } %>
+      
+          <% if (currentPage < totalPages) { %>
+              <a href="?page=<%= currentPage + 1 %>&sort=<%= sort %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">Next</a>
+          <% } %>
+      </div>
+      
+    </main>
+
+    <%- include('../partials/user/footer') %>
+    
+   
+
+
+    <script src="js/jquery.min.js"></script>
+  <script src="js/plugins.js"></script>
+  <script src="js/SmoothScroll.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+  <script src="js/script.min.js"></script>
+  <script>
+    document.getElementById("sortSelect").addEventListener("change", function () {
+    const selectedSort = this.value;
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set("sort", selectedSort);
+    window.location.href = currentUrl.toString();
+});
+    
+    
+document.getElementById("sortSelect").addEventListener("change", function () {
+    const selectedSort = this.value;
+    const currentUrl = new URL(window.location.href);
+    
+   
+    currentUrl.searchParams.set("sort", selectedSort);
+
+   
+    window.location.href = currentUrl.toString();
+});
+
+
+document.getElementById("searchInput").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        const searchQuery = this.value.trim();
+        const params = new URLSearchParams(window.location.search);
+        const currentSort = params.get('sort') || 'newest';
+        const currentCategory = params.get('category') || '';
+
+        let url = `/swizz-times/shop?search=${encodeURIComponent(searchQuery)}&sort=${currentSort}&page=1`;
+        if (currentCategory && currentCategory !== 'all') {
+            url += `&category=${currentCategory}`;
+        }
+
+        window.location.href = url;
+    }
+});
+
+document.getElementById("searchBtn").addEventListener("click", function () {
+    const searchQuery = document.getElementById("searchInput").value.trim();
+    const params = new URLSearchParams(window.location.search);
+    const currentSort = params.get('sort') || 'newest';
+    const currentCategory = params.get('category') || '';
+
+    let url = `/swizz-times/shop?search=${encodeURIComponent(searchQuery)}&sort=${currentSort}&page=1`;
+    if (currentCategory && currentCategory !== 'all') {
+        url += `&category=${currentCategory}`;
+    }
+
+    window.location.href = url;
+});
+
+document.getElementById("clearSearch").addEventListener("click", function () {
+    const params = new URLSearchParams(window.location.search);
+    const currentSort = params.get('sort') || 'newest';
+    const currentCategory = params.get('category') || '';
+
+    let url = `/swizz-times/shop?sort=${currentSort}&page=1`;
+    if (currentCategory && currentCategory !== 'all') {
+        url += `&category=${currentCategory}`;
+    }
+
+    window.location.href = url;
+});
+
+
+
+
+
+document.querySelectorAll('.categories button').forEach(button => {
+    button.addEventListener('click', function() {
+       
+        document.querySelector('.categories button.active').classList.remove('active');
+        this.classList.add('active');
+        
+        const categoryId = this.getAttribute('data-category');
+        const currentSearch = new URLSearchParams(window.location.search).get('search') || '';
+        const currentSort = new URLSearchParams(window.location.search).get('sort') || 'newest';
+        
+      
+        if (categoryId === 'all') {
+            window.location.href = `/swizz-times/shop?sort=${currentSort}&page=1${currentSearch ? '&search=' + encodeURIComponent(currentSearch) : ''}`;
+        } else {
+            window.location.href = `/swizz-times/shop?category=${categoryId}&sort=${currentSort}&page=1${currentSearch ? '&search=' + encodeURIComponent(currentSearch) : ''}`;
+        }
+    });
+});
+function addToWishlist(productId,element){
+
+fetch('/swizz-times/add-to-wishlist', {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({productId})
+})
+.then(response => response.json())
+.then(data => { 
+  if (data.success) {
+   
+    Swal.fire({
+title: "Success",
+text: data.message,
+icon: "success",
+timer: 3000 
+});
+
+  } else {
+    Swal.fire({
+title: "Error",
+text: data.message,
+icon: "error",
+timer: 3000 
+});
+  }
+})
+.catch(error => console.error("Error adding to wishlist:", error));
+}
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swizz Times - Brands</title>
+    <link rel="stylesheet" href="/css/admin/adminBrands.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body>
+    <div class="container">
+        <%- include('../partials/admin/admin_sidebar') %>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Watch Brands</h1>
+                <button class="logout-button" onclick="window.location.href='/admin/logout'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+            <div class="search-container">
+                <button class="add-button" onclick="window.location.href='/admin/brands/add-brands'">ADD BRAND +</button>
+            </div>
+
+            <!-- Dynamic Brand Cards -->
+            <div class="brand-cards-container">
+                <% if (data.length > 0) { %>
+                    <% data.forEach((brand) => { %>
+                        <div class="brand-card">
+                            <div class="brand-image-container">
+                                <% if (brand.brandImage) { %>
+                                    <img src="<%= brand.brandImage %>" alt="<%= brand.brandName %>" width="100">
+                                <% } else { %>
+                                    <p>No Image</p>
+                                <% } %>
+                            </div>
+                            <div class="brand-details">
+                                <h3 class="brand-name"><%= brand.brandName %></h3>
+                                <div class="brand-meta">
+                                    <button class="toggle-status-btn <%= brand.isBlocked ? 'unblock-btn' : 'block-btn' %>" 
+                                        data-brand-id="<%= brand._id %>">
+                                    <%= brand.isBlocked ? "Unblock" : "Block" %>
+                                </button>
+                                    <div class="action-buttons">
+                                        <div class="action-buttons">
+                                            <button class="action-btn edit-btn" onclick="editBrand('<%= brand._id %>', '<%= brand.name %>','<%= brand.brandImage %>')">
+                                                <svg  width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                </svg>
+                                            </button>
+                                            <button class="action-btn delete-btn" onclick="deleteBrand('<%= brand._id %>')">
+                                                <svg  width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No brands found.</p>
+                <% } %>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <% if (totalPages > 1) { %>
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                    <% } %>
+                <% } %>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        
+
+        function deleteBrand(brandId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/admin/brands/delete/${brandId}`, { method: 'DELETE' })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("Deleted!", "Brand has been deleted.", "success")
+                                    .then(() => window.location.reload());
+                            } else {
+                                Swal.fire("Error", data.message, "error");
+                            }
+                        })
+                        .catch(err => console.error("Error deleting brand:", err));
+                }
+            });
+        }
+
+         // Function to set active menu item
+         function setActiveMenuItem() {
+            const currentPath = window.location.pathname.toLowerCase();
+            const menuButtons = document.querySelectorAll('.sidebar .nav-button');
+
+            menuButtons.forEach(button => {
+                button.classList.remove('active'); 
+
+                const buttonText = button.textContent.trim().toLowerCase();
+                
+                const routes = {
+                    "dashboard": "/admin/dashboard",
+                    "product": "/admin/products",
+                    "users": "/admin/users",
+                    "brands": "/admin/brands",
+                    "category": "/admin/category",
+                    "orders": "/admin/orders",
+                    "coupons": "/admin/coupons",
+                    "wallet": "/admin/wallet",
+                   
+                };
+
+                if (routes[buttonText] === currentPath) {
+                    button.classList.add('active');
+                }
+
+                button.addEventListener('click', () => {
+                    const route = routes[buttonText];
+                    if (route) {
+                        window.location.href = route;
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', setActiveMenuItem);
+
+// =================================block-unblock==================================================
+        document.querySelectorAll('.toggle-status-btn').forEach(button => {
+    button.addEventListener('click', async () => {
+        const brandId = button.getAttribute('data-brand-id');
+        const isCurrentlyBlocked = button.textContent.trim() === 'Unblock';
+
+       
+        Swal.fire({
+            title: 'Are you sure',
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: 'Yes',
+            cancelButtonText: "Cancel"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch('/admin/brands/block-unblock', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ brandId })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                      
+                        button.textContent = result.isBlocked ? 'Unblock' : 'Block';
+                        button.closest('tr').querySelector('td:nth-child(5)').textContent = result.isBlocked ? 'Blocked' : 'Active';
+
+                        Swal.fire(
+                            'Done',
+                            "success"
+                        );
+                    } else {
+                        Swal.fire("Error", "Failed to update status.", "error");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                
+                }
+            }
+        });
+    });
+});
+
+function editBrand(brandId, currentName, currentImageUrl) {
+    Swal.fire({
+        title: "Edit Brand",
+        html: `
+            <div style="text-align: left;">
+                <label for="swal-brand-name" style="font-weight: bold; display: block; margin-bottom: 5px;">Brand Name:</label>
+                <input id="swal-brand-name" class="swal2-input" value="${currentName}" placeholder="Enter Brand Name">
+
+                <label for="swal-brand-imageUrl" style="font-weight: bold; display: block; margin-top: 10px; margin-bottom: 5px;">Brand Image URL:</label>
+                <input id="swal-brand-imageUrl" class="swal2-input" placeholder="Enter Image URL" value="${currentImageUrl}" oninput="updateImagePreview(this.value)">
+
+                <div id="image-preview-container" style="text-align: center; margin-top: 15px;">
+                    <img id="swal-brand-preview" src="${currentImageUrl}" alt="Brand Image" style="max-width: 100px; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: "Save Changes",
+        cancelButtonText: "Cancel",
+        focusConfirm: false,
+        preConfirm: () => {
+            return {
+                name: document.getElementById("swal-brand-name").value.trim(),
+                image: document.getElementById("swal-brand-imageUrl").value.trim(),
+            };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const updatedBrand = result.value;
+
+            fetch(`/admin/brands/update/${brandId}`, {
+                method: 'PUT',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedBrand)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire("Updated", "Brand has been updated successfully.", "success")
+                        .then(() => window.location.reload());
+                } else {
+                    Swal.fire("Error", data.message, "error");
+                }
+            })
+            .catch(err => console.error("Error updating brand:", err));
+        }
+    });
+}
+
+// Function to update the image preview dynamically
+function updateImagePreview(imageUrl) {
+    const previewImg = document.getElementById("swal-brand-preview");
+    if (imageUrl) {
+        previewImg.src = imageUrl;
+    } else {
+        previewImg.src = "https://via.placeholder.com/100"; // Fallback placeholder
+    }
+}
+
+    </script>
+</body>
+</html>
