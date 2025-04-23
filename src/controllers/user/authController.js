@@ -164,6 +164,7 @@ const verifyOtp = async (req,res)=>{
             return res.json({ success: false, message: "User already exists" });
         }
         
+
         
         let referredBy = null;
         
