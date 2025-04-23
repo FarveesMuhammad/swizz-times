@@ -191,11 +191,11 @@ const loadDashboard = async (req, res) => {
       endDate: endDate || "",
     };
 
-    console.log("Response Data===============", {
-      totalSales: responseData.totalSales,
-      totalOrders: responseData.totalOrders,
-      salesData: responseData.salesData,
-    }); 
+    // console.log("Response Data===============", {
+    //   totalSales: responseData.totalSales,
+    //   totalOrders: responseData.totalOrders,
+    //   salesData: responseData.salesData,
+    // }); 
 
     res.render("admin/dashboard", responseData);
   } catch (error) {
@@ -265,10 +265,10 @@ const downloadExcelReport = async (req, res) => {
     const dateFilter = createDateFilter(filter, startDate, endDate);
     const queryFilter = { ...dateFilter }; 
 
-    console.log("Excel Query Filter:", queryFilter);
+    // console.log("Excel Query Filter:", queryFilter);
 
     const orders = await Order.find(queryFilter).populate("items.product");
-    console.log("Excel Report Orders:", orders.length, orders.map(o => ({ orderId: o.orderId, createdAt: o.createdAt, orderStatus: o.orderStatus })));
+    // console.log("Excel Report Orders:", orders.length, orders.map(o => ({ orderId: o.orderId, createdAt: o.createdAt, orderStatus: o.orderStatus })));
 
     const summary = await Order.aggregate([
       { $match: queryFilter },
@@ -351,10 +351,10 @@ const downloadPDFReport = async (req, res) => {
     const dateFilter = createDateFilter(filter, startDate, endDate);
     const queryFilter = { ...dateFilter };
 
-    console.log("PDF Query Filter:", queryFilter);
+    // console.log("PDF Query Filter:", queryFilter);
 
     const orders = await Order.find(queryFilter).populate("items.product");
-    console.log("PDF Report Orders:", orders.length, orders.map(o => ({ orderId: o.orderId, createdAt: o.createdAt, orderStatus: o.orderStatus })));
+    // console.log("PDF Report Orders:", orders.length, orders.map(o => ({ orderId: o.orderId, createdAt: o.createdAt, orderStatus: o.orderStatus })));
 
     const summary = await Order.aggregate([
       { $match: queryFilter },
