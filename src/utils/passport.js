@@ -11,28 +11,23 @@ passport.use(
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL: "/auth/google/callback",
-        },  
+        },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log('object');
-                if(profile?.emails?.[0]?.value){
+                let user = await User.findOne({ email: profile.emails[0].value });
 
-                    let user = await User.findOne({ email: profile.emails[0].value });
-                    console.log(user)
-                    if (!user) {
-                        user = await User.create({
-                            fullname: profile.displayName,
-                            email: profile.emails[0].value,
-                            username: profile.emails[0].value.split("@")[0], 
-                            googleId: profile.id,
-                            isBlocked: false,
-                        });
-                    }
-                    
-                    return done(null, user);
+                if (!user) {
+                    user = await User.create({
+                        fullname: profile.displayName,
+                        email: profile.emails[0].value,
+                        username: profile.emails[0].value.split("@")[0], 
+                        googleId: profile.id,
+                        isBlocked: false,
+                    });
                 }
+
+                return done(null, user);
             } catch (error) {
-                console.log('object',error);
                 return done(error, null);
             }
         }
