@@ -26,7 +26,7 @@ const getCheckOutPage = async (req,res) =>{
 
 
         if (!cart || cart.items.length === 0) {
-            return res.redirect('/swizz-times/shop');
+            return res.redirect('/shop');
         }
 
      

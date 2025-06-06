@@ -58,7 +58,7 @@
 </head>
 <body>
     <div class="breadcrumb">
-        <a href="/swizz-times">Home</a> › Your Wallet
+        <a href="/">Home</a> › Your Wallet
       </div>
       <button class="btn btn-outline-secondary mb-3" onclick="window.history.back()">
           <i class="fa fa-arrow-left"></i> Go Back
@@ -71,7 +71,7 @@
                 <i class="fas fa-box-open fa-3x text-muted"></i>
                 <h4 class="mt-3">No Orders Found</h4>
                 <p>Looks like you haven't placed any orders yet.</p>
-                <a href="/swizz-times/shop" class="btn btn-primary">Start Shopping</a>
+                <a href="/shop" class="btn btn-primary">Start Shopping</a>
             </div>
         <% } else { %>
 
@@ -89,7 +89,7 @@
                                                         'status-cancelled' %>">
                                 <%= order.orderStatus %>
                             </span>
-                            <a href="/swizz-times/order-details/<%= order._id %>" class="btn btn-view btn-sm ms-3">View Details</a>
+                            <a href="/order-details/<%= order._id %>" class="btn btn-view btn-sm ms-3">View Details</a>
                         </div>
                     </div>
                     <div class="order-details">
@@ -147,19 +147,19 @@
                 <ul class="pagination">
                     <% if (currentPage > 1) { %>
                         <li class="page-item">
-                            <a class="page-link" href="/swizz-times/order?page=<%= currentPage - 1 %>">Previous</a>
+                            <a class="page-link" href="/order?page=<%= currentPage - 1 %>">Previous</a>
                         </li>
                     <% } %>
 
                     <% for (let i = 1; i <= totalPages; i++) { %>
                         <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                            <a class="page-link" href="/swizz-times/order?page=<%= i %>"><%= i %></a>
+                            <a class="page-link" href="/order?page=<%= i %>"><%= i %></a>
                         </li>
                     <% } %>
 
                     <% if (currentPage < totalPages) { %>
                         <li class="page-item">
-                            <a class="page-link" href="/swizz-times/order?page=<%= currentPage + 1 %>">Next</a>
+                            <a class="page-link" href="/order?page=<%= currentPage + 1 %>">Next</a>
                         </li>
                     <% } %>
                 </ul>
@@ -181,7 +181,7 @@
                 if (!reason) {
                     Swal.showValidationMessage("Reason is required!");
                 }
-                return fetch(`/swizz-times/order/cancel-order/${orderId}`, {
+                return fetch(`/order/cancel-order/${orderId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ reason })
@@ -205,7 +205,7 @@
                 if (!reason) {
                     Swal.showValidationMessage("Reason is required!");
                 }
-                return fetch(`/swizz-times/order/cancel-product/${orderId}/${productId}`, {
+                return fetch(`/order/cancel-product/${orderId}/${productId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ reason })
@@ -229,7 +229,7 @@
                 if (!reason) {
                     Swal.showValidationMessage("Reason is required!");
                 }
-                return fetch(`/swizz-times/order/return-order/${orderId}`, {
+                return fetch(`/order/return-order/${orderId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ reason })

@@ -328,7 +328,7 @@
         
     </div>
     <div class="back-to-shop">
-        <a href="/swizz-times/shop"><i class="fas fa-arrow-left"></i></a>
+        <a href="/shop"><i class="fas fa-arrow-left"></i></a>
         <span class="text-muted">Back to shop</span>
       </div>
 </div>
@@ -337,7 +337,7 @@
         <div class="empty-cart">
           <i class="fas fa-shopping-cart"></i>
           <p>Your cart is empty</p>
-          <a href="/swizz-times/shop" class="btn shop-now-btn">Shop Now</a>
+          <a href="/shop" class="btn shop-now-btn">Shop Now</a>
         </div>
       </div>
     <% } %>
@@ -387,7 +387,7 @@
      
     
       try {
-        const response = await fetch(`/swizz-times/cart/update`, {
+        const response = await fetch(`/cart/update`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ productId, change })
@@ -429,7 +429,7 @@
     
       if (confirmDelete.isConfirmed) {
         try {
-          const response = await fetch(`/swizz-times/cart/remove/${productId}`, { method: "DELETE" });
+          const response = await fetch(`/cart/remove/${productId}`, { method: "DELETE" });
           const data = await response.json();
           if (data.success) {
             Swal.fire({
@@ -480,7 +480,7 @@
   }
 
   
-  window.location.href = "/swizz-times/checkout";
+  window.location.href = "/checkout";
 }
 
   </script>

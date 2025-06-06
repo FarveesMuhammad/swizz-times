@@ -122,7 +122,7 @@ const productDetailPage = async (req, res) => {
         
         
         if (!product) {
-            return res.redirect('/swizz-times/shop');  
+            return res.redirect('/shop');  
         }
         
         const relatedProducts = await Product.find({
@@ -165,7 +165,7 @@ const reviewAdd = async (req,res) =>{
         product.ratings = totalRatings / product.reviews.length;
 
         await product.save();
-        res.redirect(`/swizz-times/shop/product/${req.params.id}`);
+        res.redirect(`/shop/product/${req.params.id}`);
     } catch (error) {
         console.error("Error submitting review:", error.message);
         res.status(500).json({ success: false, message: "Internal server error" });

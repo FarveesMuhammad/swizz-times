@@ -303,7 +303,7 @@
                 </div>
 
                 <div class="d-grid gap-2 mt-3">
-                    <a href="/swizz-times/shop" class="btn btn-primary">Continue Shopping</a>
+                    <a href="/shop" class="btn btn-primary">Continue Shopping</a>
 
                     <% if (order.orderStatus !== 'Payment Pending') { %>
                         <button class="btn btn-outline-custom" onclick="downloadInvoice('<%= order.orderId %>')">
@@ -322,7 +322,7 @@
         async function downloadInvoice(orderId) {
             try {
                 console.log(1)
-                const response = await fetch(`/swizz-times/order-details/download-invoice/${orderId}`);
+                const response = await fetch(`/order-details/download-invoice/${orderId}`);
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
                 
@@ -342,7 +342,7 @@
             async function retryPayment(orderId) {
             try {
                 console.log(orderId)
-                const response = await fetch(`/swizz-times/retry-payment/${orderId}`, {
+                const response = await fetch(`/retry-payment/${orderId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                 });
@@ -379,7 +379,7 @@
                         }
                     };
 
-    const verifyResponse = await fetch("/swizz-times/retry-verify-payment", {
+    const verifyResponse = await fetch("/retry-verify-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({...paymentData})
@@ -387,7 +387,7 @@
 
     const verifyData = await verifyResponse.json();
     if (verifyData.success) {
-        window.location.href = `/swizz-times/order-success/${verifyData.orderId}`;
+        window.location.href = `/order-success/${verifyData.orderId}`;
     } else {
         Swal.fire({
                                 icon: 'error',
@@ -403,7 +403,7 @@ theme: { color: "#528FF0" }
                 rzp1.open();
                 rzp1.on('payment.failed', async (response) => {
                     // console.log(1)
-                        const failureResponse = await fetch(`/swizz-times/handle-payment-failure`, {
+                        const failureResponse = await fetch(`/handle-payment-failure`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -413,7 +413,7 @@ theme: { color: "#528FF0" }
                         });
                         const failureData = await failureResponse.json();
                         if (failureData.success) {
-                            window.location.href = `/swizz-times/transaction-failure?orderId=${failureData.orderId}`;
+                            window.location.href = `/transaction-failure?orderId=${failureData.orderId}`;
                         } else {
                             Swal.fire({
                                 icon: 'error',

@@ -69,7 +69,7 @@ router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 
             console.log("Google signup done");
     
  
-        res.redirect("/swizz-times"); 
+        res.redirect("/"); 
     }
 );
  

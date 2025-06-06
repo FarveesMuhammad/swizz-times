@@ -78,7 +78,7 @@ app.use(express.static(path.join(__dirname,"public")))
 
 app.use('/',authRoutes)
 app.use('/admin',adminRoutes)
-app.use('/swizz-times',userRoutes)
+app.use('/',userRoutes)
    
 
 app.use((req, res, next) => {

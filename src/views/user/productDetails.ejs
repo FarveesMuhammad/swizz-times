@@ -45,8 +45,8 @@
          <!-- Breadcrumb -->
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/swizz-times" class="text-decoration-none">Home</a></li>
-        <li class="breadcrumb-item"><a href="/swizz-times/shop" class="text-decoration-none">Shop</a></li>
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+        <li class="breadcrumb-item"><a href="/shop" class="text-decoration-none">Shop</a></li>
         <li class="breadcrumb-item"><a href="" class="text-decoration-none"><%= product.category.name %></a></li>
         <li class="breadcrumb-item active" aria-current="page"><%= product.productName %></li>
     </ol>
@@ -238,7 +238,7 @@
       
         <div class="review-form" id="review-form" style="display: none;">
             <h4 class="mb-4">Write Your Review</h4>
-            <form action="/swizz-times/shop/product/review/<%= product._id %>" method="post">
+            <form action="/shop/product/review/<%= product._id %>" method="post">
                 <div class="form-group">
                     <label class="form-label">Your Name</label>
                     <input type="text" name="name" class="form-control" required>
@@ -299,7 +299,7 @@
                                 <i class="far fa-star star"></i>
                             </div>
                         </div>
-                        <a href="/swizz-times/shop/product/<%= relatedProduct._id %>" class="btn btn-outline-dark w-100 mt-2">View Details</a>
+                        <a href="/shop/product/<%= relatedProduct._id %>" class="btn btn-outline-dark w-100 mt-2">View Details</a>
                         <% if(relatedProduct.status === "Available" && relatedProduct.quantity > 0) { %>
                             <button class="btn btn-dark w-100 mt-2" onclick="addToCart('<%= relatedProduct._id %>')">Add to Cart</button>
                         <% } else { %>
@@ -318,7 +318,7 @@
 <script>
     function addToWishlist(productId,element){
 
-fetch('/swizz-times/add-to-wishlist', {
+fetch('/add-to-wishlist', {
 method: 'POST',
 headers: {'Content-Type': 'application/json'},
 body: JSON.stringify({productId})
@@ -457,7 +457,7 @@ function changeQuantity(change, productId) {
 
         
     try {
-        const response = await fetch("/swizz-times/cart", {
+        const response = await fetch("/cart", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

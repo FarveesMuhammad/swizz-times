@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="breadcrumbs">
-        <a href="/swizz-times">Home</a>
+        <a href="/">Home</a>
         <span class="separator">›</span>
         <span class="current">Login and Security</span>
     </div>
@@ -229,7 +229,7 @@
     
     async function updateUserProfile(imageUrl) {
         try {
-            const response = await fetch('/swizz-times/editUser', {
+            const response = await fetch('/editUser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -279,7 +279,7 @@
      }).then((result) => {
     if (result.isConfirmed) {
         const fullname = result.value;
-        fetch('/swizz-times/editUser', {  
+        fetch('/editUser', {  
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ fullname })
@@ -327,7 +327,7 @@
      }).then((result) => {
     if (result.isConfirmed) {
         const email = result.value;
-        fetch('/swizz-times/editUser', {  
+        fetch('/editUser', {  
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ email })
@@ -335,7 +335,7 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-               window.location.href = "/swizz-times/editUser/verify-otp"
+               window.location.href = "/editUser/verify-otp"
             }
                 else {Swal.fire("Error", data.message || "Something went wrong", "error");}
         })
@@ -376,7 +376,7 @@
      }).then((result) => {
     if (result.isConfirmed) {
         const mobile = result.value;
-        fetch('/swizz-times/editUser', {  
+        fetch('/editUser', {  
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ mobile })
@@ -423,7 +423,7 @@
      }).then((result) => {
     if (result.isConfirmed) {
         const dob = result.value;
-        fetch('/swizz-times/editUser', {  
+        fetch('/editUser', {  
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ dob })
@@ -480,7 +480,7 @@ document.addEventListener('DOMContentLoaded', function() {
             Swal.fire("Error", "Password must have at least one uppercase letter, one lowercase letter, and be at least 6 characters long.", "error");
             return;
         }
-            fetch('/swizz-times/editUser/change-password',{
+            fetch('/editUser/change-password',{
                 method : 'POST',
                 headers :{'Content-Type':'application/json'},
                 body : JSON.stringify({currentPassword,newPassword,confirmPassword})

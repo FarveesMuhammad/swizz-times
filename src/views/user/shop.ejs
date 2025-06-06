@@ -110,7 +110,7 @@
                     </svg>
                   </button>
         
-                  <div class="product-image" onclick="window.location.href='/swizz-times/shop/product/<%= productId %>'">
+                  <div class="product-image" onclick="window.location.href='/shop/product/<%= productId %>'">
                     <img src="<%= productImage %>" alt="<%= productName %>" class="card-img-top">
                   </div>
         
@@ -133,7 +133,7 @@
                         <% } %>
                       </div>
         
-                      <button onclick="window.location.href='/swizz-times/shop/product/<%= productId %>'"
+                      <button onclick="window.location.href='/shop/product/<%= productId %>'"
                         class="btn btn-dark add-to-cart-btn"
                         data-product-id="<%= productId %>"
                         <%= isAvailable ? '' : 'disabled' %>>
@@ -207,7 +207,7 @@ document.getElementById("searchInput").addEventListener("keypress", function (ev
         const currentSort = params.get('sort') || 'newest';
         const currentCategory = params.get('category') || '';
 
-        let url = `/swizz-times/shop?search=${encodeURIComponent(searchQuery)}&sort=${currentSort}&page=1`;
+        let url = `/shop?search=${encodeURIComponent(searchQuery)}&sort=${currentSort}&page=1`;
         if (currentCategory && currentCategory !== 'all') {
             url += `&category=${currentCategory}`;
         }
@@ -222,7 +222,7 @@ document.getElementById("searchBtn").addEventListener("click", function () {
     const currentSort = params.get('sort') || 'newest';
     const currentCategory = params.get('category') || '';
 
-    let url = `/swizz-times/shop?search=${encodeURIComponent(searchQuery)}&sort=${currentSort}&page=1`;
+    let url = `/shop?search=${encodeURIComponent(searchQuery)}&sort=${currentSort}&page=1`;
     if (currentCategory && currentCategory !== 'all') {
         url += `&category=${currentCategory}`;
     }
@@ -235,7 +235,7 @@ document.getElementById("clearSearch").addEventListener("click", function () {
     const currentSort = params.get('sort') || 'newest';
     const currentCategory = params.get('category') || '';
 
-    let url = `/swizz-times/shop?sort=${currentSort}&page=1`;
+    let url = `/shop?sort=${currentSort}&page=1`;
     if (currentCategory && currentCategory !== 'all') {
         url += `&category=${currentCategory}`;
     }
@@ -259,15 +259,15 @@ document.querySelectorAll('.categories button').forEach(button => {
         
       
         if (categoryId === 'all') {
-            window.location.href = `/swizz-times/shop?sort=${currentSort}&page=1${currentSearch ? '&search=' + encodeURIComponent(currentSearch) : ''}`;
+            window.location.href = `/shop?sort=${currentSort}&page=1${currentSearch ? '&search=' + encodeURIComponent(currentSearch) : ''}`;
         } else {
-            window.location.href = `/swizz-times/shop?category=${categoryId}&sort=${currentSort}&page=1${currentSearch ? '&search=' + encodeURIComponent(currentSearch) : ''}`;
+            window.location.href = `/shop?category=${categoryId}&sort=${currentSort}&page=1${currentSearch ? '&search=' + encodeURIComponent(currentSearch) : ''}`;
         }
     });
 });
 function addToWishlist(productId,element){
 
-fetch('/swizz-times/add-to-wishlist', {
+fetch('/add-to-wishlist', {
 method: 'POST',
 headers: {'Content-Type': 'application/json'},
 body: JSON.stringify({productId})
